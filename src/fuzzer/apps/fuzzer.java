@@ -1,7 +1,7 @@
 package fuzzer.apps;
 /**
  * 
- * @authors Connor <csh6900>, 
+ * @authors Connor <csh6900>, Gabriel <gem5597>
  *
  */
 public class fuzzer {
@@ -14,4 +14,11 @@ public class fuzzer {
 
 	}
 
+	/***
+	 * Command line map "String" -> "String"
+	 * Keys -> Values:
+	 * 	mode -> "discover" or "test", always
+	 * 	cauth -> "username::password" or empty if there is none
+	 * 	cwords -> "filename" or empty if there is none
+	 */
 }
