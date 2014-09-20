@@ -23,7 +23,7 @@ public class InputDiscovery {
 	 * @param page The page to get inputs from.
 	 * @return All inputs from page.
 	 */
-	public List<HtmlElement> getInputs(HtmlPage page) {
+	public static List<HtmlElement> getInputs(HtmlPage page) {
 		List<HtmlElement> input_list = new ArrayList<HtmlElement>();
 		List<HtmlForm> formsList = page.getForms();
 		Iterable<DomElement> input_elements;
@@ -36,5 +36,12 @@ public class InputDiscovery {
 			}
 		}
 		return input_list;
+	}
+	
+	public static void printInputs(HtmlPage page) {
+		List<HtmlElement> inputs = getInputs(page);
+		for (HtmlElement input : inputs) {
+			System.out.println(input.asText());
+		}
 	}
 }
