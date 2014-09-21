@@ -23,25 +23,52 @@ public class InputDiscovery {
 	 * @param page The page to get inputs from.
 	 * @return All inputs from page.
 	 */
-	public static List<HtmlElement> getInputs(HtmlPage page) {
-		List<HtmlElement> input_list = new ArrayList<HtmlElement>();
+	public static ArrayList<DomElement> getInputs(HtmlPage page) {
+		/* As far as I can tell, there's no way in HtmlUnit
+		 * to simply get all inputs from a page or form,
+		 * so here I get all DOM elements in all forms
+		 * and take out the input elements.
+		 */
 		List<HtmlForm> formsList = page.getForms();
-		Iterable<DomElement> input_elements;
+		Iterable<DomElement> formElements;
+		ArrayList<DomElement> formChildren = new ArrayList<DomElement>();
 		for (HtmlForm form : formsList) {
-			input_elements = form.getChildElements();
-			for (DomElement input : input_elements) {
-				if (input instanceof HtmlInput) {
-					input_list.add((HtmlInput)input);
-				}
+			formElements = form.getChildElements();
+			for (DomElement e : formElements) {
+				formChildren.add(e);
+				formChildren.addAll(_getElements(e));
 			}
 		}
-		return input_list;
+		ArrayList<DomElement> inputs = new ArrayList<DomElement>();
+		for (DomElement e : formChildren) {
+			if (e instanceof HtmlInput) {
+				inputs.add(e);
+			}
+		}
+		
+		return inputs;
+	}
+	
+	/**
+	 * Recursively get all the child elements of a DOM element
+	 * @param e element to get children of
+	 * @return all child elements of e
+	 */
+	private static ArrayList<DomElement>_getElements(DomElement e) {
+		ArrayList<DomElement> elements = new ArrayList<DomElement>();
+		Iterable<DomElement> children = e.getChildElements();
+		for (DomElement child : children) {
+			elements.add(child);
+			elements.addAll(_getElements(child));
+		}
+		return elements;
 	}
 	
 	public static void printInputs(HtmlPage page) {
-		List<HtmlElement> inputs = getInputs(page);
-		for (HtmlElement input : inputs) {
-			System.out.println(input.asText());
+		ArrayList<DomElement> inputs = getInputs(page);
+		System.out.println("Number of inputs:" + inputs.size());
+		for (DomElement input : inputs) {
+			System.out.println("Input 1: "+input.getAttribute("name"));
 		}
 	}
 }
