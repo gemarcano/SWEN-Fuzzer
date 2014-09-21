@@ -3,7 +3,9 @@
  */
 package fuzzer.apps;
 
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -68,9 +70,25 @@ public class InputDiscovery {
 		}
 		return elements;
 	}
-    
 
-	
+    /**
+     * Returns an ArrayList of the GET inputs in the given url.
+     */
+    public static ArrayList<String> getUrlInputs(URL url) {
+        ArrayList<String> inputs;
+        String queries = url.getQuery();
+        String[] queries_split = queries.split("&");
+        inputs = new ArrayList<String>(Arrays.asList(queries_split));
+        return inputs;
+    }
+
+	/**
+     * Prints all the inputs that the fuzzer discovers on
+     * the given page and web client:
+     * - Form input tags (from page)
+     * - Cookies (from client)
+     * - Url GET inputs (from page)
+     */
 	public static void printInputs(WebClient client, HtmlPage page) {
 		ArrayList<DomElement> inputs = getInputs(page);
 		System.out.println("Form input elements");
@@ -88,7 +106,7 @@ public class InputDiscovery {
         for (Cookie cookie : cookies) {
             System.out.print("Cookie " + n + ": ");
             System.out.print("name: " + cookie.getName());
-            System.out.print("value: " + cookie.getValue());
+            System.out.print(" value: " + cookie.getValue());
             System.out.println();
         }
 	}
