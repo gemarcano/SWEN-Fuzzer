@@ -67,8 +67,17 @@ public class InputDiscovery {
 	public static void printInputs(HtmlPage page) {
 		ArrayList<DomElement> inputs = getInputs(page);
 		System.out.println("Number of inputs:" + inputs.size());
+        int n = 0;
 		for (DomElement input : inputs) {
-			System.out.println("Input 1: "+input.getAttribute("name"));
+			System.out.print("Input " + n + ": ");
+            System.out.print("name: " + input.getAttribute("name"));
+            System.out.print(" type: " + input.getAttribute("type"));
+            System.out.println();
+            n += 1;
 		}
 	}
 }
+
+
+
+
