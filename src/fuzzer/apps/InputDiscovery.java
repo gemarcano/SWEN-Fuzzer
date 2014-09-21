@@ -5,19 +5,24 @@ package fuzzer.apps;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.util.Cookie;
+import com.gargoylesoftware.htmlunit.CookieManager;
+import com.gargoylesoftware.htmlunit.WebClient;
 
 /**
  * @author Joe <jak3122>
  * 
  */
 public class InputDiscovery {
-	
+
 	/**
 	 * Returns all input elements on a given HtmlPage.
 	 * @param page The page to get inputs from.
@@ -63,10 +68,12 @@ public class InputDiscovery {
 		}
 		return elements;
 	}
+    
+
 	
-	public static void printInputs(HtmlPage page) {
+	public static void printInputs(WebClient client, HtmlPage page) {
 		ArrayList<DomElement> inputs = getInputs(page);
-		System.out.println("Number of inputs:" + inputs.size());
+		System.out.println("Form input elements");
         int n = 0;
 		for (DomElement input : inputs) {
 			System.out.print("Input " + n + ": ");
@@ -75,6 +82,15 @@ public class InputDiscovery {
             System.out.println();
             n += 1;
 		}
+        System.out.println("Cookies");
+        Set<Cookie> cookies = client.getCookies(page.getUrl());
+        n = 0;
+        for (Cookie cookie : cookies) {
+            System.out.print("Cookie " + n + ": ");
+            System.out.print("name: " + cookie.getName());
+            System.out.print("value: " + cookie.getValue());
+            System.out.println();
+        }
 	}
 }
 

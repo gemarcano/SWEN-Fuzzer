@@ -26,7 +26,7 @@ public class fuzzer {
 		WebClient webClient = new WebClient();
 		try {
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp");
-			InputDiscovery.printInputs(page);
+			InputDiscovery.printInputs(webClient, page);
 		} catch (FailingHttpStatusCodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
