@@ -17,11 +17,6 @@ public class CLIParser {
 		mCLIParams.put("cauth", "");
 		mCLIParams.put("cwords", "");
 		
-		mValidParameters = new ArrayList<String>();
-		mValidParameters.add("--custom-auth");
-		mValidParameters.add("--common-words");
-		
-		
 	}
 	
 	/**
@@ -91,7 +86,7 @@ public class CLIParser {
 		String[] up = aUsernamePassword.split(":");
 		String result = "";
 		if (up.length == 2) {
-			result = up[0] + ":" + up[1];
+			result = up[0] + "::" + up[1];
 		}
 		return result;
 	}
