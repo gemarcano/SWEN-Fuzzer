@@ -28,7 +28,7 @@ public class fuzzer {
 	 * @return - A list of strings with potential links to find
 	 */
 	public static ArrayList<String> getGuesses() {
-		File file = new File("docs/pageGuesses");
+		File file = new File("docs/pageGuesses.txt");
 		BufferedReader reader;
 		ArrayList<String> lines = new ArrayList<String>();
 		try {
