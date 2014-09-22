@@ -1,14 +1,26 @@
 package fuzzer.apps;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CLIParser {
 	
 	private Map<String,String> mCLIParams;
+	private List<String> mValidParameters;
 	
 	public CLIParser(String[] aCommandLine) {
 		mCLIParams = parseCommandLine(aCommandLine);
+		mCLIParams.put("mode", "");
+		mCLIParams.put("cauth", "");
+		mCLIParams.put("cwords", "");
+		
+		mValidParameters = new ArrayList<String>();
+		mValidParameters.add("--custom-auth");
+		mValidParameters.add("--common-words");
+		
 		
 	}
 	
@@ -46,8 +58,40 @@ public class CLIParser {
 		result.put("cauth", "");
 		result.put("cwords", "");
 		
-		if (aCommandLine != null) {
-		
+		if (aCommandLine != null && aCommandLine.length > 0) {
+			String command = aCommandLine[0];
+			if (command.equals("discover") /*|| command.equals("test")*/) {
+				mCLIParams.put("mode", command);
+			}
+			
+			//For the rest of the parameters
+			for (int i = 1; i < aCommandLine.length; i++) {
+				String[] option = aCommandLine[i].split("=");
+				if (option.length <= 2) {
+					switch (option[0]) {
+					case "--custom-auth":
+						if (option.length == 2) {
+							mCLIParams.put(option[0], parsePassword(option[1]));
+						}
+						break;
+					case "--common-words":
+						if (option.length == 2) {
+							mCLIParams.put(option[0], option[1]);
+						}
+						break;
+					default:
+					} //What if get(0) is out of bounds?
+				}
+			}
+		}
+		return result;
+	}
+	
+	private String parsePassword(String aUsernamePassword) {
+		String[] up = aUsernamePassword.split(":");
+		String result = "";
+		if (up.length == 2) {
+			result = up[0] + ":" + up[1];
 		}
 		return result;
 	}
