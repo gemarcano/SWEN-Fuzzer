@@ -23,6 +23,9 @@ public class fuzzer {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		
+		CLIParser commandParser = new CLIParser(args); //See CLIParser.get() for description of how to get parameters
+		
 		WebClient webClient = new WebClient();
 		try {
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp?username=test&password=hello");
@@ -41,7 +44,5 @@ public class fuzzer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		CLIParser commandParser = new CLIParser(args); //See CLIParser.get() for description of how to get parameters
 	}
 }
