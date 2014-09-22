@@ -69,6 +69,7 @@ public class fuzzer {
 	public static void main(String[] args) {
 		WebClient webClient = new WebClient();
 		try {
+			discoverLinks(webClient);
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp?username=test&password=hello");
             System.out.println("URL:");
             System.out.println(page.getUrl());

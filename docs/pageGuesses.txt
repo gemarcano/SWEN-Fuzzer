@@ -1,8 +1,8 @@
 
-index.html
-index
-admin
-administrator
+/index.html
+/index
+/admin
+/administrator
 .php
 .jsp
 .html
