@@ -84,6 +84,7 @@ public class fuzzer {
 			InputDiscovery.printInputs(webClient, page);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.out.println("==============================================");
 			e.printStackTrace();
 		}
 		
