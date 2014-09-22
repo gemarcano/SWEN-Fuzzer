@@ -58,8 +58,10 @@ public class fuzzer {
 			
 			try {
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit"+line);
+			//TODO dvwa
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
+				System.out.println("----------------------------------------");
 				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
 			}
 			} catch (FailingHttpStatusCodeException e) {}
