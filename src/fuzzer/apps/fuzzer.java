@@ -52,14 +52,18 @@ public class fuzzer {
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
-	private static void discoverLinks(WebClient webClient) throws IOException, MalformedURLException {
+	private static void discoverLinks(WebClient webClient) throws IOException {
 		ArrayList<String> lines = getGuesses();
 		for (String line : lines) {
+			
+			try {
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit"+line);
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
 				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
 			}
+			} catch (FailingHttpStatusCodeException e) {}
+			
 		}
 	}
 	
@@ -76,12 +80,6 @@ public class fuzzer {
             System.out.println("URL inputs:");
             System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
 			InputDiscovery.printInputs(webClient, page);
-		} catch (FailingHttpStatusCodeException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
