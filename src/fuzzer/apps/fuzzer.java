@@ -54,11 +54,12 @@ public class fuzzer {
 	 */
 	private static void discoverLinks(WebClient webClient) throws IOException, MalformedURLException {
 		ArrayList<String> lines = getGuesses();
-		//TODO
-		HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit");
-		List<HtmlAnchor> links = page.getAnchors();
-		for (HtmlAnchor link : links) {
-			System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
+		for (String line : lines) {
+			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit"+line);
+			List<HtmlAnchor> links = page.getAnchors();
+			for (HtmlAnchor link : links) {
+				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
+			}
 		}
 	}
 	
