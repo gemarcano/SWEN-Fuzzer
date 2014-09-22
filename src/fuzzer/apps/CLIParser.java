@@ -11,12 +11,16 @@ public class CLIParser {
 	private Map<String,String> mCLIParams;
 	private List<String> mValidParameters;
 	
+	/**
+	 * Constructs the CLIParser.
+	 * Some syntax notes:
+	 * 	--custom-auth=USERNAME::PASSWORD
+	 * 	--custom-words=FILENAME_PATH
+	 * 
+	 * @param aCommandLine String array with contents of command line arguments as received from the JVM.
+	 */
 	public CLIParser(String[] aCommandLine) {
 		mCLIParams = parseCommandLine(aCommandLine);
-		mCLIParams.put("mode", "");
-		mCLIParams.put("cauth", "");
-		mCLIParams.put("cwords", "");
-		
 	}
 	
 	/**
@@ -56,7 +60,7 @@ public class CLIParser {
 		if (aCommandLine != null && aCommandLine.length > 0) {
 			String command = aCommandLine[0];
 			if (command.equals("discover") /*|| command.equals("test")*/) {
-				mCLIParams.put("mode", command);
+				result.put("mode", command);
 			}
 			
 			//For the rest of the parameters
@@ -66,12 +70,12 @@ public class CLIParser {
 					switch (option[0]) {
 					case "--custom-auth":
 						if (option.length == 2) {
-							mCLIParams.put(option[0], parsePassword(option[1]));
+							result.put("cauth", parsePassword(option[1]));
 						}
 						break;
 					case "--common-words":
 						if (option.length == 2) {
-							mCLIParams.put(option[0], option[1]);
+							result.put("cwords", option[1]);
 						}
 						break;
 					default:
@@ -83,7 +87,7 @@ public class CLIParser {
 	}
 	
 	private String parsePassword(String aUsernamePassword) {
-		String[] up = aUsernamePassword.split(":");
+		String[] up = aUsernamePassword.split("::");
 		String result = "";
 		if (up.length == 2) {
 			result = up[0] + "::" + up[1];
