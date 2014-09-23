@@ -16,7 +16,7 @@ public class CLIParser {
 	 * Some syntax notes:
 	 * 	--custom-auth=USERNAME::PASSWORD
 	 * 	--custom-words=FILENAME_PATH
-	 * 
+	 * FIXME: FILENAME_PATH currently does not like using quotes.
 	 * @param aCommandLine String array with contents of command line arguments as received from the JVM.
 	 */
 	public CLIParser(String[] aCommandLine) {

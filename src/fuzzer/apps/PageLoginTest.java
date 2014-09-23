@@ -24,7 +24,7 @@ public class PageLoginTest {
 		WebClient client = new WebClient();
 		HtmlPage page;
 		try {
-			page = client.getPage("http://localhost:8080/bodgeit/login.jsp");
+			page = client.getPage("http://127.0.0.1/dvwa/login.php");
 			assertTrue(login.logon(page));
 		} catch (FailingHttpStatusCodeException e) {
 			// TODO Auto-generated catch block

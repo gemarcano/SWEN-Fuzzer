@@ -49,9 +49,24 @@ public class PageLogin {
 	static private HtmlSubmitInput findLoginSubmitButton(HtmlPage aPage) 
 	{
 		HtmlSubmitInput result = null;
-		try {
-			result = (HtmlSubmitInput) aPage.getElementById("submit");
-		} catch (ElementNotFoundException e) {}
+		boolean found = false;
+		
+		//Gabriel Marcano: Documentation for getElementById is wrong.
+		//It does not throw anything, but returns null if it fails
+		//to find an element. This is according to the source code
+		//of HtmlPage.java from HtmlUnit itself.
+		result = (HtmlSubmitInput) aPage.getElementById("submit");
+		
+		if (result == null)
+		{
+			try
+			{
+				result = (HtmlSubmitInput) aPage.getElementByName("Login");
+			} catch(ElementNotFoundException e) {
+				result = null;
+			}
+		}
+		
 		return result;
 	}
 	
@@ -98,7 +113,7 @@ public class PageLogin {
 		}
 		
 		//Verify that we are logged in. This may be done via cookies or making sure that we have been moved to another page (one without login prompts).
-		if (findLoginSubmitButton(aPage) == null)
+		if (findLoginSubmitButton(newPage) == null)
 		{
 			success = true;
 		}
