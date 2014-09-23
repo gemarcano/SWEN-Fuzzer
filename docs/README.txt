@@ -21,40 +21,29 @@ File contains two main folders:
 
 -> documents : a folder containing:
 
-   - README.txt : This file containing a description of the project's contents
+   - README.txt : This file contains a description of the project's contents
+   - pageGuesses.txt : An example file containing common page names and extensions for use
+                       with the --common-words parameter
 
 -> src : a folder containing the source code for our Fuzzer
    
    -> fuzzer.apps
    		
-   		- fuzzer.java : Our main program
-   		
+   		- fuzzer.java : The main program
    		- CLIParser.java : Command-line Interface Parser
+        - InputDiscovery.java : Class that discovers various inputs on a webpage
+        - PageLogin.java : Handles logging in to webpages
 
-Installation
+Installation and Usage
 ==============================================================================================
+For Windows:
 
-1. Download Java version 7
-2. Extract the contents of SWEN-Fuzzer
-3. Open up a terminal
-4. Navigate to src within SWEN-Fuzzer
-5. From command line, run "javac SWEN-Fuzzer"
-6. From command line, run "java SWEN-Fuzzer"
-7. ** Describe how to use CLI Parser **
+1. Extract the contents of SWEN-Fuzzer
+2. Run compile.bat to compile the program
+3. Modify run.bat and add or edit the command line arguments at the end of the "java" command
+4. Execute run.bat to run the program
 
-Frequently Asked Questions 
-==============================================================================================
+Alternatively:
+Use the "java" command in run.bat as reference for how to run the program by command line.
 
-= Are you awesome?
 
-- Yes, we are.
-
-Screenshots 
-==============================================================================================
-
-None
-
-Upgrade Notice
-==============================================================================================
-
-No upgrades as of 9/20/14
