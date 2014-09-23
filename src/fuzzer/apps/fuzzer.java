@@ -16,6 +16,7 @@ import java.util.List;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -85,12 +86,16 @@ public class fuzzer {
 			ArrayList<String> lines = getGuesses();
 			for (String line : lines) {
 				HtmlPage guessBodgeit = webClient.getPage("http://localhost:8080/bodgeit"+line);
-				if (guessBodgeit.isHtmlPage()) {
-					System.out.println("Page discovered: " + guessBodgeit.asText());
+                WebResponse response = guessBodgeit.getWebResponse();
+                int statusCode = response.getStatusCode();
+				if (guessBodgeit.isHtmlPage() && statusCode != 404) {
+					System.out.println("Page discovered: " + guessBodgeit.getUrl());
 				}
-				HtmlPage guessDVWA = webClient.getPage("http://localhost:8080/bodgeit"+line);
-				if (guessDVWA.isHtmlPage()) {
-					System.out.println("Page discovered: " + guessDVWA.asText());
+				HtmlPage guessDVWA = webClient.getPage("http://localhost:8080/dvwa"+line);
+                response = guessDVWA.getWebResponse();
+                statusCode = response.getStatusCode();
+				if (guessDVWA.isHtmlPage() && statusCode != 404) {
+					System.out.println("Page discovered: " + guessDVWA.getUrl());
 				}
 			}
 			
