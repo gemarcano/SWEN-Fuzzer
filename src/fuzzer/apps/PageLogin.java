@@ -100,6 +100,11 @@ public class PageLogin {
 		List<String> usernames = new ArrayList<>();
 		List<String> passwords = new ArrayList<>();
 		
+		//Attempt to find login forms
+		//If found,
+		//	If a known site, use known information
+		//	Try to use a list of common username and password
+		//	try to bruteforce entry? (this should be a non-default option)
 		usernames.add(mKnownUsernames.get("dvwa"));
 		usernames.add(mKnownUsernames.get("bodgeit"));
 		passwords.add(mKnownPasswords.get("dvwa"));
@@ -128,26 +133,7 @@ public class PageLogin {
 			{
 				success = true;
 			}
-			
-			//Attempt to find login forms
-			//If found,
-			//	If a known site, use known information
-			//	Try to use a list of common username and password
-			//	try to bruteforce entry? (this should be a non-default option)
 		}
 		return success;
-	}
-	
-	private static boolean findForm(HtmlPage aPage, String aName)
-	{
-		boolean result;
-		List<HtmlForm> list = aPage.getForms();
-		try {
-			HtmlForm form = aPage.getFormByName(aName);
-			result = true;
-		} catch (ElementNotFoundException e) {
-			result = false;
-		}
-		return result;
 	}
 }
