@@ -52,20 +52,24 @@ public class fuzzer {
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
-	private static void discoverLinks(WebClient webClient) throws IOException {
+	private static void discoverLinks(WebClient webClient) {
 		ArrayList<String> lines = getGuesses();
 		for (String line : lines) {
 			
 			try {
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit"+line);
+            System.out.println("On guessed page: "+ page.getUrl());
 			//TODO dvwa
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
 				System.out.println("----------------------------------------");
 				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
+                System.out.println("Finish that line");
 			}
-			} catch (FailingHttpStatusCodeException e) {}
-			
+			} catch (FailingHttpStatusCodeException | IOException e) {
+                System.out.println("Caught one in discoverLinks!");
+            }
+			System.out.println("Exiting discoverLinks!");
 		}
 	}
 	
@@ -76,6 +80,7 @@ public class fuzzer {
 		WebClient webClient = new WebClient();
 		try {
 			discoverLinks(webClient);
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~yo!");
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp?username=test&password=hello");
             System.out.println("URL:");
             System.out.println(page.getUrl());
