@@ -75,9 +75,10 @@ public class PageLogin {
 	/**	Returns true if logon succeeded. False otherwise.
 	 * 
 	 * @param aPage Page with login forms.
+     * @param app The app to log in to.
 	 * @return True upon sucessful login (assumes success if it cannot find login forms on the page loaded after the username password submit).
 	 */
-	public boolean logon(HtmlPage aPage)
+	public boolean logon(HtmlPage aPage, String app)
 	{
 		boolean success = false;
 		
@@ -85,6 +86,12 @@ public class PageLogin {
 		HtmlPasswordInput passInput;
 		HtmlSubmitInput submit;
 		String username, password;
+
+        //Attempt to find login forms
+        //If found,
+        //	If a known site, use known information
+        //	Try to use a list of common username and password
+        //	try to bruteforce entry? (this should be a non-default option)
 		
 		//find username, password fields, and submit button
 		userInput = findUsernameField(aPage);
@@ -96,44 +103,46 @@ public class PageLogin {
 		{
 			return success; //No point in continuing if we can't find the login portion
 		}
-		
-		List<String> usernames = new ArrayList<>();
-		List<String> passwords = new ArrayList<>();
-		
-		//Attempt to find login forms
-		//If found,
-		//	If a known site, use known information
-		//	Try to use a list of common username and password
-		//	try to bruteforce entry? (this should be a non-default option)
-		usernames.add(mKnownUsernames.get("dvwa"));
-		usernames.add(mKnownUsernames.get("bodgeit"));
-		passwords.add(mKnownPasswords.get("dvwa"));
-		passwords.add(mKnownPasswords.get("bodgeit"));
-		for (int i = 0; !success && i < usernames.size(); i++)
-		{
-			//Determine username and password combination to use
-			username = usernames.get(i);
-			password = passwords.get(i);
-			
-			userInput.setText(username);
-			passInput.setText(password);
-			
-			//Attempt to log in.
-			HtmlPage newPage = null;
-			try {
-				newPage = submit.click();
-			} catch (IOException e) {
-				// FIXME what is a reasonable thing to do here?
-				e.printStackTrace();
-				break;
-			}
-			
-			//Verify that we are logged in. This may be done via cookies or making sure that we have been moved to another page (one without login prompts).
-			if (findLoginSubmitButton(newPage) == null)
-			{
-				success = true;
-			}
-		}
+
+        //Determine username and password combination to use
+        username = mKnownUsernames.get(app);
+        password = mKnownPasswords.get(app);
+        
+        userInput.setText(username);
+        passInput.setText(password);
+        
+        //Attempt to log in.
+        HtmlPage newPage = null;
+        try {
+            newPage = submit.click();
+        } catch (IOException e) {
+            // FIXME what is a reasonable thing to do here?
+            e.printStackTrace();
+        }
+        
+        //Verify that we are logged in. This may be done via cookies or making sure that we have been moved to another page (one without login prompts).
+        if (findLoginSubmitButton(newPage) == null)
+        {
+            success = true;
+        }
 		return success;
 	}
+    
+    public void printLogon(HtmlPage aPage, String app) {
+        System.out.println("--------------------------------------");
+        System.out.println("Custom authentication...");
+        System.out.println("--------------------------------------");
+        boolean loginResult = logon(aPage, app);
+        if (loginResult) {
+            String username = mKnownUsernames.get(app);
+            String password = mKnownPasswords.get(app);
+            System.out.println("Successfully logged in to the app "
+                + app + " at URL " + aPage.getUrl());
+            System.out.println("username: " + username);
+            System.out.println("password: " + password);
+        } else {
+            System.out.println("Failed to log in to the app "
+                + app + " at URL " + aPage.getUrl());
+        }
+    }
 }

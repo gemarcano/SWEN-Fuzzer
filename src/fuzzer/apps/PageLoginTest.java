@@ -25,9 +25,9 @@ public class PageLoginTest {
 		HtmlPage page;
 		try {
 			page = client.getPage("http://127.0.0.1/dvwa/login.php");
-			assertTrue(login.logon(page));
+			assertTrue(login.logon(page, "dvwa"));
 			page = client.getPage("http://127.0.0.1:8080/bodgeit/login.jsp");
-			assertTrue(login.logon(page));
+			assertTrue(login.logon(page, "bodgeit"));
 		} catch (FailingHttpStatusCodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

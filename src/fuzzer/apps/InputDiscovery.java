@@ -77,8 +77,12 @@ public class InputDiscovery {
     public static ArrayList<String> getUrlInputs(URL url) {
         ArrayList<String> inputs;
         String queries = url.getQuery();
-        String[] queries_split = queries.split("&");
-        inputs = new ArrayList<String>(Arrays.asList(queries_split));
+        if (queries != null) {
+            String[] queries_split = queries.split("&");
+            inputs = new ArrayList<String>(Arrays.asList(queries_split));
+        } else {
+            inputs = null;
+        }
         return inputs;
     }
 
@@ -91,23 +95,33 @@ public class InputDiscovery {
      */
 	public static void printInputs(WebClient client, HtmlPage page) {
 		ArrayList<DomElement> inputs = getInputs(page);
-		System.out.println("Form input elements");
+        System.out.println("--------------------------------------");
+		System.out.println("Page inputs...");
+        System.out.println("--------------------------------------");
         int n = 0;
 		for (DomElement input : inputs) {
-			System.out.print("Input " + n + ": ");
-            System.out.print("name: " + input.getAttribute("name"));
-            System.out.print(" type: " + input.getAttribute("type"));
+			System.out.print("[Input " + n + "] ");
+            System.out.print("name: \"" + input.getAttribute("name") + "\"");
+            System.out.print(" type: \"" + input.getAttribute("type") + "\"");
             System.out.println();
             n += 1;
 		}
-        System.out.println("Cookies");
+        System.out.println("--------------------------------------");
+		System.out.println("URL inputs...");
+        System.out.println("--------------------------------------");
+        System.out.println(getUrlInputs(page.getUrl()));
+        
+        System.out.println("--------------------------------------");
+        System.out.println("Cookies...");
+        System.out.println("--------------------------------------");
         Set<Cookie> cookies = client.getCookies(page.getUrl());
         n = 0;
         for (Cookie cookie : cookies) {
-            System.out.print("Cookie " + n + ": ");
-            System.out.print("name: " + cookie.getName());
-            System.out.print(" value: " + cookie.getValue());
+            System.out.print("[Cookie " + n + "] ");
+            System.out.print("name: \"" + cookie.getName() + "\"");
+            System.out.print(" value: \"" + cookie.getValue() + "\"");
             System.out.println();
+            n += 1;
         }
 	}
 }

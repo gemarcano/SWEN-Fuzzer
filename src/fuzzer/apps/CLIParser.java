@@ -14,7 +14,7 @@ public class CLIParser {
 	/**
 	 * Constructs the CLIParser.
 	 * Some syntax notes:
-	 * 	--custom-auth=USERNAME::PASSWORD
+	 * 	--custom-auth=APP
 	 * 	--custom-words=FILENAME_PATH
 	 * FIXME: FILENAME_PATH currently does not like using quotes.
 	 * @param aCommandLine String array with contents of command line arguments as received from the JVM.
@@ -28,7 +28,7 @@ public class CLIParser {
 	 * 
 	 * {@param aKey The key of the parameter to get. Specifically:
 	 * 		mode -> "discover" or "test", empty if there is none (this should be an error)
-	 *		cauth -> "username::password" or empty if there is none
+	 *		cauth -> "app" or empty if there is none
 	 *		cwords -> "filename" or empty if there is none
 	 *		url -> URL of site
 	 * }
@@ -48,7 +48,7 @@ public class CLIParser {
 	 * 	"String" -> "String"
 	 *	Keys -> Values:
 	 *	mode -> "discover" or "test", empty if there is none (this should be an error)
-	 *	cauth -> "username::password" or empty if there is none
+	 *	cauth -> "app" or empty if there is none
 	 *	cwords -> "filename" or empty if there is none
 	 * }
 	 */
@@ -74,7 +74,7 @@ public class CLIParser {
 					switch (option[0]) {
 					case "--custom-auth":
 						if (option.length == 2) {
-							result.put("cauth", parsePassword(option[1]));
+							result.put("cauth", option[1]);
 						}
 						break;
 					case "--common-words":
@@ -86,15 +86,6 @@ public class CLIParser {
 					} //What if get(0) is out of bounds?
 				}
 			}
-		}
-		return result;
-	}
-	
-	private String parsePassword(String aUsernamePassword) {
-		String[] up = aUsernamePassword.split("::");
-		String result = "";
-		if (up.length == 2) {
-			result = up[0] + "::" + up[1];
 		}
 		return result;
 	}

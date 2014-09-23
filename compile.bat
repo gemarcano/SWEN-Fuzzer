@@ -1,2 +1,2 @@
-javac -cp lib\*;*;src\fuzzer\apps;. -d bin src\fuzzer\apps\*.java
+javac -cp lib\* -d bin src\fuzzer\apps\*.java
 pause
