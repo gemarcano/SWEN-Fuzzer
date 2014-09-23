@@ -125,7 +125,11 @@ public class fuzzer {
                 System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
                 InputDiscovery.printInputs(webClient, page);
                 // Custom authentication
-                PageLogin.printLogon(page);
+                if (fuzzAuth != null) {
+                    PageLogin login = new PageLogin();
+                    login.printLogon(page, fuzzAuth);
+                    //PageLogin.printLogon(page, fuzzAuth);
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

@@ -100,9 +100,9 @@ public class InputDiscovery {
         System.out.println("--------------------------------------");
         int n = 0;
 		for (DomElement input : inputs) {
-			System.out.print("Input " + n + ": ");
-            System.out.print("name: " + input.getAttribute("name"));
-            System.out.print(" type: " + input.getAttribute("type"));
+			System.out.print("[Input " + n + "] ");
+            System.out.print("name: \"" + input.getAttribute("name") + "\"");
+            System.out.print(" type: \"" + input.getAttribute("type") + "\"");
             System.out.println();
             n += 1;
 		}
@@ -118,9 +118,10 @@ public class InputDiscovery {
         n = 0;
         for (Cookie cookie : cookies) {
             System.out.print("[Cookie " + n + "] ");
-            System.out.print("name: " + cookie.getName());
-            System.out.print(" value: " + cookie.getValue());
+            System.out.print("name: \"" + cookie.getName() + "\"");
+            System.out.print(" value: \"" + cookie.getValue() + "\"");
             System.out.println();
+            n += 1;
         }
 	}
 }
