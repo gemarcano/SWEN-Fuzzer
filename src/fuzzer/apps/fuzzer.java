@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -64,7 +65,7 @@ public class fuzzer {
 			//TODO dvwa
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
-				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
+				System.out.println("[" + link.asText() + "] " + link.getHrefAttribute());
 			}
 			
 		} catch (FailingHttpStatusCodeException | IOException e) {}
@@ -97,6 +98,10 @@ public class fuzzer {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+        // Turn off those CSS errors and warnings
+        java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF); 
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
+        
         CLIParser commandParser = new CLIParser(args); //See CLIParser.get() for description of how to get parameters
         WebClient webClient = new WebClient();
         WebClientOptions options = webClient.getOptions();
@@ -108,8 +113,8 @@ public class fuzzer {
         String fuzzAuth = commandParser.get("cauth");
         String fuzzWords = commandParser.get("cwords");
         if (fuzzMode.equals("discover")) {
-            System.out.println("Fuzz-discover on url: " + fuzzUrl);
             System.out.println();
+            System.out.println("Fuzz-discover on url: " + fuzzUrl);
             // Discover links
             discoverLinks(webClient, fuzzUrl);
             // Guess pages

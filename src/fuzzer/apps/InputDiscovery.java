@@ -117,7 +117,7 @@ public class InputDiscovery {
         Set<Cookie> cookies = client.getCookies(page.getUrl());
         n = 0;
         for (Cookie cookie : cookies) {
-            System.out.print("Cookie " + n + ": ");
+            System.out.print("[Cookie " + n + "] ");
             System.out.print("name: " + cookie.getName());
             System.out.print(" value: " + cookie.getValue());
             System.out.println();
