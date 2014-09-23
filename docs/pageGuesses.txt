@@ -1,8 +1,8 @@
-
 /index.html
 /index
 /admin
 /administrator
+/product.jsp
 .php
 .jsp
 .html

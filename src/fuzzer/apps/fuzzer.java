@@ -15,6 +15,8 @@ import java.util.List;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebClientOptions;
+import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -52,21 +54,38 @@ public class fuzzer {
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
-	private static void discoverLinks(WebClient webClient) throws IOException {
-		ArrayList<String> lines = getGuesses();
-		for (String line : lines) {
-			
-			try {
-			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit"+line);
+	private static void discoverLinks(WebClient webClient, String url) {
+		
+		try {
+			System.out.println("Discovering links for " + url + "...");
+			HtmlPage page = webClient.getPage(url);
 			//TODO dvwa
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
-				System.out.println("----------------------------------------");
 				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
 			}
-			} catch (FailingHttpStatusCodeException e) {}
 			
-		}
+		} catch (FailingHttpStatusCodeException | IOException e) {}
+	}
+	
+	/**
+	 * 
+	 * @param webClient
+	 */
+	private static void guessPages(WebClient webClient, String url) {
+		
+		try {
+			ArrayList<String> lines = getGuesses();
+			for (String line : lines) {
+				HtmlPage guess = webClient.getPage(url+line);
+                WebResponse response = guess.getWebResponse();
+                int statusCode = response.getStatusCode();
+				if (guess.isHtmlPage() && statusCode != 404) {
+					System.out.println("Page discovered: " + guess.getUrl());
+				}
+			}
+			
+		} catch (FailingHttpStatusCodeException | IOException e) {}
 	}
 	
 	/**
@@ -74,8 +93,13 @@ public class fuzzer {
 	 */
 	public static void main(String[] args) {
 		WebClient webClient = new WebClient();
+        WebClientOptions options = webClient.getOptions();
+        options.setThrowExceptionOnFailingStatusCode(false);
+        options.setPrintContentOnFailingStatusCode(false);
+        
 		try {
-			discoverLinks(webClient);
+			discoverLinks(webClient, "http://localhost:8000/bodgeit");
+			guessPages(webClient, "http://localhost:8000/bodgeit");
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp?username=test&password=hello");
             System.out.println("URL:");
             System.out.println(page.getUrl());
@@ -84,7 +108,6 @@ public class fuzzer {
 			InputDiscovery.printInputs(webClient, page);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("==============================================");
 			e.printStackTrace();
 		}
 		
