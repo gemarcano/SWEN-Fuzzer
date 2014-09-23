@@ -29,8 +29,8 @@ public class fuzzer {
 	 * Function to receive a list of strings to try and guess from a given file
 	 * @return - A list of strings with potential links to find
 	 */
-	public static ArrayList<String> getGuesses() {
-		File file = new File("docs/pageGuesses.txt");
+	public static ArrayList<String> getGuesses(String path) {
+		File file = new File(path);
 		BufferedReader reader;
 		ArrayList<String> lines = new ArrayList<String>();
 		try {
@@ -72,10 +72,10 @@ public class fuzzer {
 	 * 
 	 * @param webClient
 	 */
-	private static void guessPages(WebClient webClient, String url) {
+	private static void guessPages(WebClient webClient, String url, String wordsPath) {
 		
 		try {
-			ArrayList<String> lines = getGuesses();
+			ArrayList<String> lines = getGuesses(wordsPath);
 			for (String line : lines) {
 				HtmlPage guess = webClient.getPage(url+line);
                 WebResponse response = guess.getWebResponse();
@@ -92,25 +92,42 @@ public class fuzzer {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		WebClient webClient = new WebClient();
+        CLIParser commandParser = new CLIParser(args); //See CLIParser.get() for description of how to get parameters
+        WebClient webClient = new WebClient();
         WebClientOptions options = webClient.getOptions();
         options.setThrowExceptionOnFailingStatusCode(false);
         options.setPrintContentOnFailingStatusCode(false);
         
-		try {
-			discoverLinks(webClient, "http://localhost:8000/bodgeit");
-			guessPages(webClient, "http://localhost:8000/bodgeit");
-			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp?username=test&password=hello");
-            System.out.println("URL:");
-            System.out.println(page.getUrl());
-            System.out.println("URL inputs:");
-            System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
-			InputDiscovery.printInputs(webClient, page);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        String fuzzMode = commandParser.get("mode");
+        String fuzzUrl = commandParser.get("url");
+        String fuzzAuth = commandParser.get("cauth");
+        String fuzzWords = commandParser.get("cwords");
+        if (fuzzMode.equals("discover")) {
+            discoverLinks(webClient, fuzzUrl);
+            guessPages(webClient, fuzzUrl, fuzzWords);
+            try {
+                
+                HtmlPage page = webClient.getPage(fuzzUrl);
+                System.out.println("URL:");
+                System.out.println(page.getUrl());
+                System.out.println("URL inputs:");
+                System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
+                InputDiscovery.printInputs(webClient, page);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else if (fuzzMode.equals("test")) {
+            // Fuzz-test code here.
+        } else {
+            System.out.println("Invalid mode \"" + fuzzMode + "\". "
+                + "Use \"discover\" or \"test\".");
+        }
+    
 		
-		CLIParser commandParser = new CLIParser(args); //See CLIParser.get() for description of how to get parameters
+        
+		
+		
+		
 	}
 }

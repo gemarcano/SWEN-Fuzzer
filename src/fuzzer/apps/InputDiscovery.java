@@ -77,8 +77,12 @@ public class InputDiscovery {
     public static ArrayList<String> getUrlInputs(URL url) {
         ArrayList<String> inputs;
         String queries = url.getQuery();
-        String[] queries_split = queries.split("&");
-        inputs = new ArrayList<String>(Arrays.asList(queries_split));
+        if (queries != null) {
+            String[] queries_split = queries.split("&");
+            inputs = new ArrayList<String>(Arrays.asList(queries_split));
+        } else {
+            inputs = null;
+        }
         return inputs;
     }
 
