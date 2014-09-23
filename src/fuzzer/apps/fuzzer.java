@@ -81,6 +81,7 @@ public class fuzzer {
 	private static void guessPages(WebClient webClient) {
 		
 		try {
+<<<<<<< HEAD
 			ArrayList<String> lines = getGuesses();
 			for (String line : lines) {
 				HtmlPage guess = webClient.getPage("http://localhost:8080/bodgeit"+line);
@@ -88,6 +89,13 @@ public class fuzzer {
 					System.out.println("Page discovered: " + guess.asText());
 				}
 			}
+=======
+		ArrayList<String> lines = getGuesses();
+		for (String line : lines) {
+			HtmlPage guess = webClient.getPage("http://localhost:8080/bodgeit"+line);
+			guess.isHtmlPage();
+		}
+>>>>>>> branch 'master' of https://github.com/gemarcano/SWEN-Fuzzer.git
 		} catch (FailingHttpStatusCodeException | IOException e) {}
 	}
 	
