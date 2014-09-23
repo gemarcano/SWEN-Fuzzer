@@ -15,6 +15,7 @@ import java.util.List;
 
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebClientOptions;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
@@ -52,20 +53,23 @@ public class fuzzer {
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
-	private static void discoverLinks(WebClient webClient) throws IOException {
+	private static void discoverLinks(WebClient webClient) {
+        
 		ArrayList<String> lines = getGuesses();
 		for (String line : lines) {
-			
+			System.out.println("On line: "+line);
 			try {
-			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit"+line);
-			//TODO dvwa
-			List<HtmlAnchor> links = page.getAnchors();
-			for (HtmlAnchor link : links) {
-				System.out.println("----------------------------------------");
-				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
-			}
-			} catch (FailingHttpStatusCodeException e) {}
-			
+                HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit"+line);
+                System.out.println("On guessed page: "+ page.getUrl());
+                //TODO dvwa
+                List<HtmlAnchor> links = page.getAnchors();
+                for (HtmlAnchor link : links) {
+                    System.out.println("----------------------------------------");
+                    System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
+                    System.out.println("Finish that line");
+                }
+			} catch (FailingHttpStatusCodeException | IOException e) {}
+			System.out.println("Exiting discoverLinks!");
 		}
 	}
 	
@@ -74,8 +78,13 @@ public class fuzzer {
 	 */
 	public static void main(String[] args) {
 		WebClient webClient = new WebClient();
+        WebClientOptions options = webClient.getOptions();
+        options.setThrowExceptionOnFailingStatusCode(false);
+        options.setPrintContentOnFailingStatusCode(false);
+        
 		try {
 			discoverLinks(webClient);
+            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~yo!");
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp?username=test&password=hello");
             System.out.println("URL:");
             System.out.println(page.getUrl());
