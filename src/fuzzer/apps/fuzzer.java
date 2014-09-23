@@ -54,24 +54,16 @@ public class fuzzer {
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
-	private static void discoverLinks(WebClient webClient) {
+	private static void discoverLinks(WebClient webClient, String url) {
 		
 		try {
-			System.out.println("Discovering links for BodgeIt...");
-			HtmlPage bodge = webClient.getPage("http://localhost:8080/bodgeit");
+			System.out.println("Discovering links for " + url + "...");
+			HtmlPage page = webClient.getPage(url);
 			//TODO dvwa
-			List<HtmlAnchor> bodgeLinks = bodge.getAnchors();
-			for (HtmlAnchor link : bodgeLinks) {
+			List<HtmlAnchor> links = page.getAnchors();
+			for (HtmlAnchor link : links) {
 				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
 			}
-			System.out.println("Discovering links for DVWA...");
-			HtmlPage dvwa = webClient.getPage("http://localhost:8080/dvwa");
-			//TODO dvwa
-			List<HtmlAnchor> dvwaLinks = dvwa.getAnchors();
-			for (HtmlAnchor link : dvwaLinks) {
-				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
-			}
-			
 			
 		} catch (FailingHttpStatusCodeException | IOException e) {}
 	}
@@ -80,22 +72,16 @@ public class fuzzer {
 	 * 
 	 * @param webClient
 	 */
-	private static void guessPages(WebClient webClient) {
+	private static void guessPages(WebClient webClient, String url) {
 		
 		try {
 			ArrayList<String> lines = getGuesses();
 			for (String line : lines) {
-				HtmlPage guessBodgeit = webClient.getPage("http://localhost:8080/bodgeit"+line);
-                WebResponse response = guessBodgeit.getWebResponse();
+				HtmlPage guess = webClient.getPage(url+line);
+                WebResponse response = guess.getWebResponse();
                 int statusCode = response.getStatusCode();
-				if (guessBodgeit.isHtmlPage() && statusCode != 404) {
-					System.out.println("Page discovered: " + guessBodgeit.getUrl());
-				}
-				HtmlPage guessDVWA = webClient.getPage("http://localhost:8080/dvwa"+line);
-                response = guessDVWA.getWebResponse();
-                statusCode = response.getStatusCode();
-				if (guessDVWA.isHtmlPage() && statusCode != 404) {
-					System.out.println("Page discovered: " + guessDVWA.getUrl());
+				if (guess.isHtmlPage() && statusCode != 404) {
+					System.out.println("Page discovered: " + guess.getUrl());
 				}
 			}
 			
@@ -112,8 +98,8 @@ public class fuzzer {
         options.setPrintContentOnFailingStatusCode(false);
         
 		try {
-			discoverLinks(webClient);
-			guessPages(webClient);
+			discoverLinks(webClient, "http://localhost:8000/bodgeit");
+			guessPages(webClient, "http://localhost:8000/bodgeit");
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp?username=test&password=hello");
             System.out.println("URL:");
             System.out.println(page.getUrl());
