@@ -13,7 +13,7 @@ public class CLIParserTest {
 		str[1] = "www.google.com";
 		str[2] = "--custom-auth=testuser::testpass";
 		CLIParser parser = new CLIParser(str);
-		//fail("Not yet implemented");
+		// fail("Not yet implemented");
 	}
 
 	@Test
@@ -27,7 +27,8 @@ public class CLIParserTest {
 		assertEquals("discover", parser.get("mode"));
 		assertEquals("www.google.com", parser.get("url"));
 		assertEquals("testuser::testpass", parser.get("cauth"));
-		assertEquals("alksdhfkalsdjhfkjasdhflkjashdlfkjadshlfkjdahslfkjh", parser.get("cwords"));
+		assertEquals("alksdhfkalsdjhfkjasdhflkjashdlfkjadshlfkjdahslfkjh",
+				parser.get("cwords"));
 	}
 
 }

@@ -1,56 +1,60 @@
 package fuzzer.apps;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
 public class CLIParser {
-	
-	private Map<String,String> mCLIParams;
+
+	private Map<String, String> mCLIParams;
 	private List<String> mValidParameters;
-	
+
 	/**
-	 * Constructs the CLIParser.
-	 * Some syntax notes:
-	 * 	--custom-auth=APP
-	 * 	--custom-words=FILENAME_PATH
-	 * FIXME: FILENAME_PATH currently does not like using quotes.
-	 * @param aCommandLine String array with contents of command line arguments as received from the JVM.
+	 * Constructs the CLIParser. Some syntax notes: --custom-auth=APP
+	 * --custom-words=FILENAME_PATH FIXME: FILENAME_PATH currently does not like
+	 * using quotes.
+	 * 
+	 * @param aCommandLine
+	 *            String array with contents of command line arguments as
+	 *            received from the JVM.
 	 */
 	public CLIParser(String[] aCommandLine) {
 		mCLIParams = parseCommandLine(aCommandLine);
 	}
-	
+
 	/**
 	 * Returns the data related to the parameter specified.
 	 * 
-	 * {@param aKey The key of the parameter to get. Specifically:
-	 * 		mode -> "discover" or "test", empty if there is none (this should be an error)
-	 *		cauth -> "app" or empty if there is none
-	 *		cwords -> "filename" or empty if there is none
-	 *		url -> URL of site
-	 * }
-	 * @return Command line map with the parsed results matched to specific keys.
+	 * @param aKey
+	 *            The key of the parameter to get. Specifically: mode ->
+	 *            "discover" or "test", empty if there is none (this should be
+	 *            an error) cauth -> "app" or empty if there is none cwords ->
+	 *            "filename" or empty if there is none url -> URL of site * }
+	 * @return Command line map with the parsed results matched to specific
+	 *         keys.
 	 */
 	public String get(String aKey) {
 		return mCLIParams.get(aKey);
 	}
-	
+
 	/**
-	 * Returns a map with all the parameters that were parsed from the command line.
+	 * Returns a map with all the parameters that were parsed from the command
+	 * line.
 	 * 
-	 * {@param aCommandLine The command line arguments as given to the Java application.
-	 *	The syntax for the command line parameter is: <pre>fuzz [discover | test] url OPTIONS</pre>
-	 * }
-	 * {@return Command line map with the parsed results matched to specific keys. Specifically:
-	 * 	"String" -> "String"
-	 *	Keys -> Values:
-	 *	mode -> "discover" or "test", empty if there is none (this should be an error)
-	 *	cauth -> "app" or empty if there is none
-	 *	cwords -> "filename" or empty if there is none
-	 * }
+	 * @param aCommandLine
+	 *            The command line arguments as given to the Java application.
+	 *            The syntax for the command line parameter is:
+	 * 
+	 * <pre>
+	 * fuzz [discover | test] url OPTIONS
+	 * </pre>
+	 * 
+	 * {@return 
+	 *            Command line map with the parsed results matched to
+	 *            specific keys. Specifically: "String" -> "String" Keys ->
+	 *            Values: mode -> "discover" or "test", empty if there is none
+	 *            (this should be an error) cauth -> "app" or empty if there is
+	 *            none cwords -> "filename" or empty if there is none * }
 	 */
 	private Map<String, String> parseCommandLine(String[] aCommandLine) {
 		Map<String, String> result = new HashMap<>();
@@ -58,16 +62,16 @@ public class CLIParser {
 		result.put("cauth", "");
 		result.put("cwords", "");
 		result.put("url", "");
-		
+
 		if (aCommandLine != null && aCommandLine.length > 1) {
 			String command = aCommandLine[0];
-			if (command.equals("discover") /*|| command.equals("test")*/) {
+			if (command.equals("discover") /* || command.equals("test") */) {
 				result.put("mode", command);
 			}
-			
+
 			result.put("url", aCommandLine[1]);
-			
-			//For the rest of the parameters
+
+			// For the rest of the parameters
 			for (int i = 2; i < aCommandLine.length; i++) {
 				String[] option = aCommandLine[i].split("=");
 				if (option.length <= 2) {
@@ -83,7 +87,7 @@ public class CLIParser {
 						}
 						break;
 					default:
-					} //What if get(0) is out of bounds?
+					} // What if get(0) is out of bounds?
 				}
 			}
 		}
