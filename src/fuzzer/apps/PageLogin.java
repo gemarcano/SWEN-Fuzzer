@@ -26,6 +26,8 @@ public class PageLogin {
 		
 		mKnownUsernames.put("dvwa", "admin");
 		mKnownPasswords.put("dvwa", "password");
+		mKnownUsernames.put("bodgeit", "test@thebodgeitstore.com");
+		mKnownPasswords.put("bodgeit", "password");
 	}
 	
 	static private HtmlTextInput findUsernameField(HtmlPage aPage) 
@@ -95,34 +97,44 @@ public class PageLogin {
 			return success; //No point in continuing if we can't find the login portion
 		}
 		
-		//Determine username and password combination to use
-		username = "admin";
-		password = "password";
+		List<String> usernames = new ArrayList<>();
+		List<String> passwords = new ArrayList<>();
 		
-		userInput.setText(username);
-		passInput.setText(password);
-		
-		//Attempt to log in.
-		HtmlPage newPage = null;
-		try {
-			newPage = submit.click();
-		} catch (IOException e) {
-			// FIXME what is a reasonable thing to do here?
-			e.printStackTrace();
-			return success;
-		}
-		
-		//Verify that we are logged in. This may be done via cookies or making sure that we have been moved to another page (one without login prompts).
-		if (findLoginSubmitButton(newPage) == null)
+		usernames.add(mKnownUsernames.get("dvwa"));
+		usernames.add(mKnownUsernames.get("bodgeit"));
+		passwords.add(mKnownPasswords.get("dvwa"));
+		passwords.add(mKnownPasswords.get("bodgeit"));
+		for (int i = 0; !success && i < usernames.size(); i++)
 		{
-			success = true;
+			//Determine username and password combination to use
+			username = usernames.get(i);
+			password = passwords.get(i);
+			
+			userInput.setText(username);
+			passInput.setText(password);
+			
+			//Attempt to log in.
+			HtmlPage newPage = null;
+			try {
+				newPage = submit.click();
+			} catch (IOException e) {
+				// FIXME what is a reasonable thing to do here?
+				e.printStackTrace();
+				break;
+			}
+			
+			//Verify that we are logged in. This may be done via cookies or making sure that we have been moved to another page (one without login prompts).
+			if (findLoginSubmitButton(newPage) == null)
+			{
+				success = true;
+			}
+			
+			//Attempt to find login forms
+			//If found,
+			//	If a known site, use known information
+			//	Try to use a list of common username and password
+			//	try to bruteforce entry? (this should be a non-default option)
 		}
-		
-		//Attempt to find login forms
-		//If found,
-		//	If a known site, use known information
-		//	Try to use a list of common username and password
-		//	try to bruteforce entry? (this should be a non-default option)
 		return success;
 	}
 	
