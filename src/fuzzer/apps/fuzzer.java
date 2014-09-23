@@ -54,23 +54,41 @@ public class fuzzer {
 	 * @throws MalformedURLException
 	 */
 	private static void discoverLinks(WebClient webClient) {
-        
-		ArrayList<String> lines = getGuesses();
-		for (String line : lines) {
-			System.out.println("On line: "+line);
-			try {
-                HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit"+line);
-                System.out.println("On guessed page: "+ page.getUrl());
-                //TODO dvwa
-                List<HtmlAnchor> links = page.getAnchors();
-                for (HtmlAnchor link : links) {
-                    System.out.println("----------------------------------------");
-                    System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
-                    System.out.println("Finish that line");
-                }
-			} catch (FailingHttpStatusCodeException | IOException e) {}
-			System.out.println("Exiting discoverLinks!");
-		}
+		
+		try {
+			HtmlPage bodge = webClient.getPage("http://localhost:8080/bodgeit");
+			//TODO dvwa
+			List<HtmlAnchor> bodgeLinks = bodge.getAnchors();
+			for (HtmlAnchor link : bodgeLinks) {
+				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
+			}
+			
+			HtmlPage dvwa = webClient.getPage("http://localhost:8080/dvwa");
+			//TODO dvwa
+			List<HtmlAnchor> dvwaLinks = dvwa.getAnchors();
+			for (HtmlAnchor link : dvwaLinks) {
+				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
+			}
+			
+			
+		} catch (FailingHttpStatusCodeException | IOException e) {}
+	}
+	
+	/**
+	 * 
+	 * @param webClient
+	 */
+	private static void guessPages(WebClient webClient) {
+		
+		try {
+			ArrayList<String> lines = getGuesses();
+			for (String line : lines) {
+				HtmlPage guess = webClient.getPage("http://localhost:8080/bodgeit"+line);
+				if (guess.isHtmlPage()) {
+					System.out.println("Page discovered: " + guess.asText());
+				}
+			}
+		} catch (FailingHttpStatusCodeException | IOException e) {}
 	}
 	
 	/**
@@ -84,7 +102,6 @@ public class fuzzer {
         
 		try {
 			discoverLinks(webClient);
-            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~yo!");
 			HtmlPage page = webClient.getPage("http://localhost:8080/bodgeit/login.jsp?username=test&password=hello");
             System.out.println("URL:");
             System.out.println(page.getUrl());
@@ -93,7 +110,6 @@ public class fuzzer {
 			InputDiscovery.printInputs(webClient, page);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("==============================================");
 			e.printStackTrace();
 		}
 		
