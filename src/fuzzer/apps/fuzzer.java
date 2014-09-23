@@ -56,13 +56,14 @@ public class fuzzer {
 	private static void discoverLinks(WebClient webClient) {
 		
 		try {
+			System.out.println("Discovering links for BodgeIt...");
 			HtmlPage bodge = webClient.getPage("http://localhost:8080/bodgeit");
 			//TODO dvwa
 			List<HtmlAnchor> bodgeLinks = bodge.getAnchors();
 			for (HtmlAnchor link : bodgeLinks) {
 				System.out.println("Link discovered: " + link.asText() + " @URL=" + link.getHrefAttribute());
 			}
-			
+			System.out.println("Discovering links for DVWA...");
 			HtmlPage dvwa = webClient.getPage("http://localhost:8080/dvwa");
 			//TODO dvwa
 			List<HtmlAnchor> dvwaLinks = dvwa.getAnchors();
@@ -83,11 +84,16 @@ public class fuzzer {
 		try {
 			ArrayList<String> lines = getGuesses();
 			for (String line : lines) {
-				HtmlPage guess = webClient.getPage("http://localhost:8080/bodgeit"+line);
-				if (guess.isHtmlPage()) {
-					System.out.println("Page discovered: " + guess.asText());
+				HtmlPage guessBodgeit = webClient.getPage("http://localhost:8080/bodgeit"+line);
+				if (guessBodgeit.isHtmlPage()) {
+					System.out.println("Page discovered: " + guessBodgeit.asText());
+				}
+				HtmlPage guessDVWA = webClient.getPage("http://localhost:8080/bodgeit"+line);
+				if (guessDVWA.isHtmlPage()) {
+					System.out.println("Page discovered: " + guessDVWA.asText());
 				}
 			}
+			
 		} catch (FailingHttpStatusCodeException | IOException e) {}
 	}
 	
