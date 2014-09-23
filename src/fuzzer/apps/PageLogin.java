@@ -137,6 +137,19 @@ public class PageLogin {
 		}
 		return success;
 	}
+    
+    public static void printLogon(HtmlPage aPage) {
+        System.out.println("--------------------------------------");
+        System.out.println("Custom authentication...");
+        System.out.println("--------------------------------------");
+        PageLogin login = new PageLogin();
+        boolean loginResult = login.logon(aPage);
+        if (loginResult) {
+            System.out.println("Successfully logged in to the webpage!");
+        } else {
+            System.out.println("Failed to log in to the webpage.");
+        }
+    }
 	
 	private static boolean findForm(HtmlPage aPage, String aName)
 	{

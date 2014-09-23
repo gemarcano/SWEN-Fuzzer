@@ -57,7 +57,9 @@ public class fuzzer {
 	private static void discoverLinks(WebClient webClient, String url) {
 		
 		try {
-			System.out.println("Discovering links for " + url + "...");
+            System.out.println("--------------------------------------");
+			System.out.println("Discovering links...");
+            System.out.println("--------------------------------------");
 			HtmlPage page = webClient.getPage(url);
 			//TODO dvwa
 			List<HtmlAnchor> links = page.getAnchors();
@@ -75,6 +77,9 @@ public class fuzzer {
 	private static void guessPages(WebClient webClient, String url, String wordsPath) {
 		
 		try {
+            System.out.println("--------------------------------------");
+			System.out.println("Guessing common pages...");
+            System.out.println("--------------------------------------");
 			ArrayList<String> lines = getGuesses(wordsPath);
 			for (String line : lines) {
 				HtmlPage guess = webClient.getPage(url+line);
@@ -103,16 +108,19 @@ public class fuzzer {
         String fuzzAuth = commandParser.get("cauth");
         String fuzzWords = commandParser.get("cwords");
         if (fuzzMode.equals("discover")) {
+            System.out.println("Fuzz-discover on url: " + fuzzUrl);
+            System.out.println();
+            // Discover links
             discoverLinks(webClient, fuzzUrl);
+            // Guess pages
             guessPages(webClient, fuzzUrl, fuzzWords);
             try {
-                
                 HtmlPage page = webClient.getPage(fuzzUrl);
-                System.out.println("URL:");
-                System.out.println(page.getUrl());
-                System.out.println("URL inputs:");
+                // Input discovery
                 System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
                 InputDiscovery.printInputs(webClient, page);
+                // Custom authentication
+                PageLogin.printLogon(page);
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

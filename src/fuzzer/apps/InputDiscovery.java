@@ -95,7 +95,9 @@ public class InputDiscovery {
      */
 	public static void printInputs(WebClient client, HtmlPage page) {
 		ArrayList<DomElement> inputs = getInputs(page);
-		System.out.println("Form input elements");
+        System.out.println("--------------------------------------");
+		System.out.println("Page inputs...");
+        System.out.println("--------------------------------------");
         int n = 0;
 		for (DomElement input : inputs) {
 			System.out.print("Input " + n + ": ");
@@ -104,7 +106,14 @@ public class InputDiscovery {
             System.out.println();
             n += 1;
 		}
-        System.out.println("Cookies");
+        System.out.println("--------------------------------------");
+		System.out.println("URL inputs...");
+        System.out.println("--------------------------------------");
+        System.out.println(getUrlInputs(page.getUrl()));
+        
+        System.out.println("--------------------------------------");
+        System.out.println("Cookies...");
+        System.out.println("--------------------------------------");
         Set<Cookie> cookies = client.getCookies(page.getUrl());
         n = 0;
         for (Cookie cookie : cookies) {
