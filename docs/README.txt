@@ -44,6 +44,12 @@ For Windows:
 4. Execute run.bat to run the program
 
 Alternatively:
-Use the "java" command in run.bat as reference for how to run the program by command line.
+Use this command to COMPILE the program:
+javac -cp lib\* -d bin src\fuzzer\apps\*.java
+
+Use this command to RUN the program:
+java -classpath bin;lib\* fuzzer.apps.fuzzer [discover | test] url OPTIONS
+Example:
+java -classpath bin;lib\* fuzzer.apps.fuzzer discover http://127.0.0.1:8080/bodgeit/login.jsp --custom-auth=bodgeit --common-words=docs/pageGuesses.txt
 
 
