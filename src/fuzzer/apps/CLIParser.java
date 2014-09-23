@@ -30,6 +30,7 @@ public class CLIParser {
 	 * 		mode -> "discover" or "test", empty if there is none (this should be an error)
 	 *		cauth -> "username::password" or empty if there is none
 	 *		cwords -> "filename" or empty if there is none
+	 *		url -> URL of site
 	 * }
 	 * @return Command line map with the parsed results matched to specific keys.
 	 */
@@ -56,15 +57,18 @@ public class CLIParser {
 		result.put("mode", "");
 		result.put("cauth", "");
 		result.put("cwords", "");
+		result.put("url", "");
 		
-		if (aCommandLine != null && aCommandLine.length > 0) {
+		if (aCommandLine != null && aCommandLine.length > 1) {
 			String command = aCommandLine[0];
 			if (command.equals("discover") /*|| command.equals("test")*/) {
 				result.put("mode", command);
 			}
 			
+			result.put("url", aCommandLine[1]);
+			
 			//For the rest of the parameters
-			for (int i = 1; i < aCommandLine.length; i++) {
+			for (int i = 2; i < aCommandLine.length; i++) {
 				String[] option = aCommandLine[i].split("=");
 				if (option.length <= 2) {
 					switch (option[0]) {
