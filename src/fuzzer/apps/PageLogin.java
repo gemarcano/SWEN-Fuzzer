@@ -99,8 +99,8 @@ public class PageLogin {
 		}
 
 		// Determine username and password combination to use
-		username = mKnownUsernames.get(app);
-		password = mKnownPasswords.get(app);
+		username = determineUsername(app);
+		password = determinePassword(app);
 
 		userInput.setText(username);
 		passInput.setText(password);
@@ -139,5 +139,29 @@ public class PageLogin {
 			System.out.println("Failed to log in to the app " + app
 					+ " at URL " + aPage.getUrl());
 		}
+	}
+	
+	private String determineUsername(String app)
+	{
+		String username = mKnownUsernames.get(app);
+		
+		if (username == null)
+		{
+			username = "";
+		}
+		
+		return username;
+	}
+	
+	private String determinePassword(String app)
+	{
+		String password = mKnownPasswords.get(app);
+		
+		if (password == null)
+		{
+			password = "";
+		}
+		
+		return password;
 	}
 }
