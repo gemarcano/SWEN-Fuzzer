@@ -70,6 +70,14 @@ public class InputDiscovery {
 		}
 		return elements;
 	}
+    
+    /**
+     * Returns a string representation of the given url
+     * without the query inputs.
+     */
+    public static String getUrlBase(URL url) {
+        return url.getAuthority() + url.getPath();
+    }
 
 	/**
 	 * Returns an ArrayList of the GET inputs in the given url.
