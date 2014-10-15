@@ -29,29 +29,24 @@ public class InputDiscovery {
 	 * @return All inputs from page.
 	 */
 	public static ArrayList<DomElement> getInputs(HtmlPage page) {
-		/*
-		 * As far as I can tell, there's no way in HtmlUnit to simply get all
-		 * inputs from a page or form, so here I get all DOM elements in all
-		 * forms and take out the input elements.
-		 */
-		List<HtmlForm> formsList = page.getForms();
-		Iterable<DomElement> formElements;
-		ArrayList<DomElement> formChildren = new ArrayList<DomElement>();
-		for (HtmlForm form : formsList) {
-			formElements = form.getChildElements();
-			for (DomElement e : formElements) {
-				formChildren.add(e);
-				formChildren.addAll(_getElements(e));
-			}
-		}
+		
+		List<DomElement> elems = page.getElementsByTagName("input");
+		
 		ArrayList<DomElement> inputs = new ArrayList<DomElement>();
-		for (DomElement e : formChildren) {
-			if (e instanceof HtmlInput) {
+		for (DomElement e : elems) {
 				inputs.add(e);
-			}
 		}
-
+		
 		return inputs;
+	}
+	
+	public static List<DomElement> getSubmitElements(HtmlPage aPage) {
+		List<DomElement> result = new ArrayList<DomElement>();
+		
+		result.add(aPage.getElementById("submit"));
+		//result.addAll(aPage.getElementsByIdAndOrName("submit"));
+		
+		return result;
 	}
 
 	/**
