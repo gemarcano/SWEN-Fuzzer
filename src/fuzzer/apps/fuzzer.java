@@ -121,6 +121,13 @@ public class fuzzer {
 		String fuzzUrl = commandParser.get("url");
 		String fuzzAuth = commandParser.get("cauth");
 		String fuzzWords = commandParser.get("cwords");
+        HtmlPage page = null;
+        try {
+            page = webClient.getPage(fuzzUrl);
+        } catch (IOException e) {
+				System.err.println(fuzzUrl + " could not be opened.");
+                System.exit(1);
+        }
 		if (fuzzMode.equals("discover")) {
 			System.out.println();
 			System.out.println("Fuzz-discover on url: " + fuzzUrl);
@@ -128,23 +135,22 @@ public class fuzzer {
 			discoverLinks(webClient, fuzzUrl);
 			// Guess pages
 			guessPages(webClient, fuzzUrl, fuzzWords);
-			try {
-				HtmlPage page = webClient.getPage(fuzzUrl);
-				// Input discovery
-				System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
-				InputDiscovery.printInputs(webClient, page);
-				// Custom authentication
-				if (fuzzAuth != null) {
-					PageLogin login = new PageLogin();
-					login.printLogon(page, fuzzAuth);
-					// PageLogin.printLogon(page, fuzzAuth);
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            // Input discovery
+            System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
+            InputDiscovery.printInputs(webClient, page);
+            // Custom authentication
+            if (fuzzAuth != null) {
+                PageLogin login = new PageLogin();
+                login.printLogon(page, fuzzAuth);
+                // PageLogin.printLogon(page, fuzzAuth);
+            }
 		} else if (fuzzMode.equals("test")) {
 			// Fuzz-test code here.
+            String fuzzSensitive = commandParser.get("sensitive");
+            SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
+            ArrayList<String> sensitiveResults = searcher.search();
+            System.out.println("Sensitive data:");
+            System.out.println(sensitiveResults);
 		} else {
 			System.out.println("Invalid mode \"" + fuzzMode + "\". "
 					+ "Use \"discover\" or \"test\".");
