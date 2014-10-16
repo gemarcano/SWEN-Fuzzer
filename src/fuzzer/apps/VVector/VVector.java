@@ -30,16 +30,16 @@ public abstract class VVector {
 	
 	public boolean testWithTimeout(int timeout) {
 		SimpleTimeLimiter limiter = new SimpleTimeLimiter();
+		boolean result = false;
 		try {
 			limiter.callWithTimeout(new Callable<Boolean>() {
 				public Boolean call() {
-					test();
-					return true;
+					return test();
 				}
 			}, timeout, TimeUnit.SECONDS, false);
-			return true;
 		} catch (Exception e) {
+			result = true;
 		}
-		return false;
+		return result;
 	}
 }
