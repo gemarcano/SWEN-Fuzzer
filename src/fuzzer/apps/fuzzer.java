@@ -13,12 +13,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 
-import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
@@ -28,10 +27,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import fuzzer.apps.VVector.BufferOverflowVector;
 import fuzzer.apps.VVector.SanitizationVector;
-import fuzzer.apps.VVector.SanitizationVectorTest;
 import fuzzer.apps.VVector.VVector;
 import fuzzer.apps.VVector.XSS_SQLVector;
-import fuzzer.apps.VVector.XSS_SQLVectorTest;
 
 public class fuzzer {
 
@@ -112,14 +109,13 @@ public class fuzzer {
 	 * @throws IOException
 	 * @throws MalformedURLException
 	 */
-	private static void discoverLinks(WebClient webClient, String url) {
+	private static HashSet<String> discoverLinks(WebClient webClient, String url) {
 
 		System.out.println("--------------------------------------");
 		System.out.println("Discovering links...");
 		System.out.println("--------------------------------------");
 
-		HashSet<String> links = discoverLinksRecursively(webClient, url,
-				new HashSet<String>());
+		return discoverLinksRecursively(webClient, url, new HashSet<String>());
 	}
 
 	/**
@@ -159,8 +155,13 @@ public class fuzzer {
 
 	/**
 	 * @param args
+	 * @throws IOException
+	 * @throws MalformedURLException
+	 * @throws FailingHttpStatusCodeException
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)
+			throws FailingHttpStatusCodeException, MalformedURLException,
+			IOException {
 		// Turn off those CSS errors and warnings
 		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
 				Level.OFF);
@@ -168,8 +169,8 @@ public class fuzzer {
 				"org.apache.commons.logging.impl.NoOpLog");
 
 		CLIParser commandParser = new CLIParser(args); // See CLIParser.get()
-														// for description of
-														// how to get parameters
+		// for description of
+		// how to get parameters
 		WebClient webClient = new WebClient();
 		WebClientOptions options = webClient.getOptions();
 		options.setThrowExceptionOnFailingStatusCode(false);
@@ -187,8 +188,8 @@ public class fuzzer {
 
 		if ("".equals(fuzzMode) && "".equals(fuzzUrl)) {
 			System.out.println("Invalid mode and/or parameters received.");
-			commandParser.printHelp("fuzzer MODE URL ARGS\n"+
-					"Where Mode is either 'discover' or 'test.'\n"
+			commandParser.printHelp("fuzzer MODE URL ARGS\n"
+					+ "Where Mode is either 'discover' or 'test.'\n"
 					+ "Enter the help menu when the mode is test to see test\n"
 					+ "related parameters.");
 			System.exit(1);
@@ -216,7 +217,7 @@ public class fuzzer {
 		System.out.println();
 		System.out.println("Fuzz-discover on url: " + fuzzUrl);
 		// Discover links
-		discoverLinks(webClient, fuzzUrl);
+		HashSet<String> pages = discoverLinks(webClient, fuzzUrl);
 		// Guess pages
 		guessPages(webClient, fuzzUrl, fuzzWords);
 		// Input discovery
@@ -226,6 +227,8 @@ public class fuzzer {
 			// Fuzz-test code here.
 			if ("".equals(fuzzRandom)) {
 				fuzzRandom = "false";
+			} else {
+				fuzzRandom = "true";
 			}
 			if ("".equals(fuzzSlow)) {
 				fuzzSlow = "500";
@@ -237,12 +240,30 @@ public class fuzzer {
 				ExecuteVectors exec;
 				// Build Vector list
 				List<String> sVectors = getGuesses(fuzzVectors);
-				List<VVector> vectors = buildVectors(page, sVectors);
 
-				exec = new ExecuteVectors(vectors, Integer.parseInt(fuzzSlow));
-				List<Boolean> results = exec.execute();
-				for (int i = 0; i < results.size(); i++) {
-					System.out.println(vectors.get(i).getDescription());
+				if (!Boolean.valueOf(fuzzRandom)) {
+					for (String urlStr : pages) {
+						List<VVector> vectors = buildVectors(
+								(HtmlPage) webClient.getPage(urlStr), sVectors);
+
+						exec = new ExecuteVectors(vectors,
+								Integer.parseInt(fuzzSlow));
+						List<Boolean> results = exec.execute();
+						for (int i = 0; i < results.size(); i++) {
+							System.out.println(vectors.get(i).getDescription());
+						}
+					}
+				} else {
+					HtmlPage mPage = webClient.getPage(new ArrayList<String>(
+							pages).get(new Random().nextInt(pages.size())));
+					List<VVector> vectors = buildVectors(mPage, sVectors);
+
+					exec = new ExecuteVectors(vectors,
+							Integer.parseInt(fuzzSlow));
+					List<Boolean> results = exec.execute();
+					for (int i = 0; i < results.size(); i++) {
+						System.out.println(vectors.get(i).getDescription());
+					}
 				}
 			}
 			if (!"".equals(fuzzSensitive)) {

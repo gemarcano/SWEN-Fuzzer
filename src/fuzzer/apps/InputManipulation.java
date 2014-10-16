@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -67,6 +69,30 @@ public class InputManipulation {
 				}
 			}
 		}
+		return result;
+	}
+	
+	/**
+	 * Test for when a random page is given and then a random input is selected to test
+	 * @param aPage
+	 * @param aInputString
+	 * @return
+	 */
+	public static List<HtmlPage> testSingleInput(HtmlPage aPage, String aInputString)
+	{
+		List<HtmlPage> result = new ArrayList<>();
+		HtmlPage currentPage;
+		try {
+			currentPage = (HtmlPage) aPage.refresh();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return new ArrayList<>();
+		}
+		
+		ArrayList<DomElement> inputs = InputDiscovery.getInputs(aPage);
+		result.add(inputs.get(new Random().nextInt(inputs.size())).getHtmlPageOrNull());
+		
 		return result;
 	}
 }
