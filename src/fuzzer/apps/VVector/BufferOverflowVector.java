@@ -2,18 +2,22 @@ package fuzzer.apps.VVector;
 
 import java.util.List;
 
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import fuzzer.apps.InputDiscovery;
 import fuzzer.apps.InputManipulation;
 
 
 public class BufferOverflowVector extends VVector {
 
 	private final HtmlPage mPage; //Original page
-	public BufferOverflowVector(HtmlPage aPage)
+	private boolean mRandom;
+	public BufferOverflowVector(HtmlPage aPage, boolean aRandom)
 	{
 		super("BufferOverflow");
 		mPage = aPage;
+		mRandom = aRandom;
 	}
 	
 	@Override
@@ -21,7 +25,15 @@ public class BufferOverflowVector extends VVector {
 		boolean result = false;
 		boolean success = false;
 		
-		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, "abcdefg");
+		List<HtmlPage> pages;
+		if (!mRandom)
+		{
+			pages = InputManipulation.testInputsWithGivenString(mPage, "abcdefg");
+		}
+		else
+		{
+			pages = InputManipulation.testSingleInput(mPage, "abcdefg");
+		}
 		
 		success = true;
 		for (HtmlPage page : pages){
@@ -36,8 +48,14 @@ public class BufferOverflowVector extends VVector {
 				overflowString += "abcdefghij";
 			}
 			
-			pages = InputManipulation.testInputsWithGivenString(mPage, overflowString);
-
+			if (!mRandom)
+			{
+				pages = InputManipulation.testInputsWithGivenString(mPage, overflowString);
+			}
+			else
+			{
+				pages = InputManipulation.testSingleInput(mPage, overflowString);
+			}
 			for (HtmlPage page : pages){
 				result = result || page.getWebResponse().getStatusCode() >= 400;
 			}
@@ -49,7 +67,14 @@ public class BufferOverflowVector extends VVector {
 				overflowString += "abcdefghij";
 			}
 			
-			pages = InputManipulation.testInputsWithGivenString(mPage, overflowString);
+			if (!mRandom)
+			{
+				pages = InputManipulation.testInputsWithGivenString(mPage, overflowString);
+			}
+			else
+			{
+				pages = InputManipulation.testSingleInput(mPage, overflowString);
+			}
 			
 			for (HtmlPage page : pages){
 				result |= page.getWebResponse().getStatusCode() >= 400;

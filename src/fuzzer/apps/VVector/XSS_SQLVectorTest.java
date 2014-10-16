@@ -20,7 +20,7 @@ public class XSS_SQLVectorTest {
 		HtmlPage page;
 		try {
 			page = client.getPage("http://127.0.0.1/dvwa/login.php");
-			XSS_SQLVector vector = new XSS_SQLVector(page, "<script>alert(\"XSS\")</script>");
+			XSS_SQLVector vector = new XSS_SQLVector(page, "<script>alert(\"XSS\")</script>", false);
 			assertTrue(vector.test());
 			
 		} catch (FailingHttpStatusCodeException e) {

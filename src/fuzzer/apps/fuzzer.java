@@ -246,7 +246,7 @@ public class fuzzer {
 					for (String urlStr : pages) {
 						HtmlPage mPage = webClient.getPage(urlStr);
 						System.out.println("Testing on - " + mPage.asText() + "...");
-						List<VVector> vectors = buildVectors(mPage, sVectors);
+						List<VVector> vectors = buildVectors(mPage, sVectors, false);
 
 						exec = new ExecuteVectors(vectors,
 								Integer.parseInt(fuzzSlow));
@@ -257,10 +257,10 @@ public class fuzzer {
 					}
 				} else {
 					HtmlPage mPage = webClient.getPage(new ArrayList<String>(
-							pages).get(new Random().nextInt(pages.size())));
+							pages).get(new Random(System.currentTimeMillis()).nextInt(pages.size())));
 					
 					System.out.println("Testing on - " + mPage.asText() + "...");
-					List<VVector> vectors = buildVectors(mPage, sVectors);
+					List<VVector> vectors = buildVectors(mPage, sVectors, true);
 
 					exec = new ExecuteVectors(vectors,
 							Integer.parseInt(fuzzSlow));
@@ -288,24 +288,24 @@ public class fuzzer {
 	}
 
 	private static List<VVector> buildVectors(HtmlPage aPage,
-			List<String> aVectors) {
+			List<String> aVectors, boolean aRandom) {
 		List<VVector> result = new ArrayList<VVector>();
 		for (String vec : aVectors) {
 			switch (vec.toLowerCase()) {
 			case "sanitize":
-				result.add(new SanitizationVector(aPage, "FIXME"));
+				result.add(new SanitizationVector(aPage, "FIXME", aRandom));
 				break;
 			case "bufferoverflow":
-				result.add(new BufferOverflowVector(aPage));
+				result.add(new BufferOverflowVector(aPage, aRandom));
 				break;
 
 			case "sqlinjection":
-				result.add(new XSS_SQLVector(aPage, "' OR 'a'='a' OR '"));
+				result.add(new XSS_SQLVector(aPage, "' OR 'a'='a' OR '", aRandom));
 				break;
 
 			case "xss":
 				result.add(new XSS_SQLVector(aPage,
-						"<script>alert(\"hello\")</script>"));
+						"<script>alert(\"hello\")</script>", aRandom));
 				break;
 			}
 		}

@@ -21,9 +21,8 @@ public class BufferOverflowVectorTest {
 		try {
 			client.getOptions().setThrowExceptionOnFailingStatusCode(false);
 			page = client.getPage("http://127.0.0.1/dvwa/login.php");
-			BufferOverflowVector vector = new BufferOverflowVector(page);
+			BufferOverflowVector vector = new BufferOverflowVector(page, false);
 			assertFalse(vector.test());
-			System.out.println(vector.getDescription());
 			
 		} catch (FailingHttpStatusCodeException e) {
 			// TODO Auto-generated catch block

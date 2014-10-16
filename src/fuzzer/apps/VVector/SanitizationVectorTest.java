@@ -20,7 +20,7 @@ public class SanitizationVectorTest {
 		HtmlPage page;
 		try {
 			page = client.getPage("http://127.0.0.1/dvwa/login.php");
-			SanitizationVector vector = new SanitizationVector(page, "test");
+			SanitizationVector vector = new SanitizationVector(page, "test", false);
 			assertTrue(vector.test());
 			
 		} catch (FailingHttpStatusCodeException e) {
