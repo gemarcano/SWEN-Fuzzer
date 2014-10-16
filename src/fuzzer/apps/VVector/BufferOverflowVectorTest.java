@@ -22,7 +22,7 @@ public class BufferOverflowVectorTest {
 			client.getOptions().setThrowExceptionOnFailingStatusCode(false);
 			page = client.getPage("http://127.0.0.1/dvwa/login.php");
 			BufferOverflowVector vector = new BufferOverflowVector(page);
-			assertFalse(vector.test());
+			assertFalse(vector.test("abcdefg"));
 			System.out.println(vector.getDescription());
 			
 		} catch (FailingHttpStatusCodeException e) {

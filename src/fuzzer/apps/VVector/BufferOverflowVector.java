@@ -20,7 +20,7 @@ public class BufferOverflowVector implements VVector {
 	
 	
 	@Override
-	public boolean test() {
+	public boolean test(String vectorString) {
 		boolean result = false;
 		boolean success = false;
 		

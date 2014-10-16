@@ -7,7 +7,7 @@ public class VVectorTest {
 	public VVectorTest(VVector aVector)
 	{
 		mVector = aVector;
-		mSuccess = mVector.test();
+		mSuccess = mVector.test("test");
 	}
 	
 	public boolean success()
