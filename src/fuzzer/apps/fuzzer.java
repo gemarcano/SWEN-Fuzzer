@@ -186,18 +186,17 @@ public class fuzzer {
             }
         }
         
-        if (fuzzMode == "discover")
-        {
-	        System.out.println();
-	        System.out.println("Fuzz-discover on url: " + fuzzUrl);
-	        // Discover links
-	        discoverLinks(webClient, fuzzUrl);
-	        // Guess pages
-	        guessPages(webClient, fuzzUrl, fuzzWords);
-	        // Input discovery
-	        System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
-	        InputDiscovery.printInputs(webClient, page);
-        }
+
+        System.out.println();
+        System.out.println("Fuzz-discover on url: " + fuzzUrl);
+        // Discover links
+        discoverLinks(webClient, fuzzUrl);
+        // Guess pages
+        guessPages(webClient, fuzzUrl, fuzzWords);
+        // Input discovery
+        System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
+        InputDiscovery.printInputs(webClient, page);
+
         
 		if (fuzzMode.equals("test")) {
 			// Fuzz-test code here.
@@ -205,7 +204,9 @@ public class fuzzer {
             
             }
             if (!"".equals(fuzzVectors)) {
-                
+                ExecuteVectors exec;
+                //Build Vector list
+                List<VVector> vectors = new ArrayList<VVector>();
             }
             if (!"".equals(fuzzSensitive)) {
                 SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
