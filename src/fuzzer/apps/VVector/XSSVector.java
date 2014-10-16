@@ -7,14 +7,13 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import fuzzer.apps.InputManipulation;
 
 
-public class XSSVector implements VVector {
+public class XSSVector extends VVector {
 
 	private final HtmlPage mPage; //Original page
-	String mDescription;
 	public XSSVector(HtmlPage aPage)
 	{
+		super("XSS");
 		mPage = aPage;
-		mDescription = "";
 	}
 	
 	@Override
@@ -64,18 +63,13 @@ public class XSSVector implements VVector {
 		//Now try to overflow.
 		if (success)
 		{
-			mDescription += "Normal run succeeded and " + (result ? "the test runs found a problem." : "test runs did not find a problem.");
+			loadDescription("Normal run succeeded and " + (result ? "the test runs found a problem." : "test runs did not find a problem."));
 		}
 		else
 		{
-			mDescription += "Normal run did not succeed!!! Tests did not run, since baseline could not be established.";
+			loadDescription("Normal run did not succeed!!! Tests did not run, since baseline could not be established.");
 		}
 		
 		return success && result;
-	}
-
-	@Override
-	public String getDescription() {
-		return mDescription;
 	}
 }

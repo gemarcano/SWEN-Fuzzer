@@ -7,15 +7,16 @@ import fuzzer.apps.VVector.VVector;
 
 public class ExecuteVectors {
 	private List<VVector> mVectors;
-	public ExecuteVectors(List<String> aVectors){
+	public ExecuteVectors(List<VVector> aVectors){
 		mVectors = new ArrayList<VVector>();
 	}
 	
 	public void execute()
 	{
+		List<Boolean> results = new ArrayList<Boolean>();
 		for (VVector vector : mVectors)
 		{
-			vector.test();
+			results.add(vector.test());
 		}
 	}
 }
