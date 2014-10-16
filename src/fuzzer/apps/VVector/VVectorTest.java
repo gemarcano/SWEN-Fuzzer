@@ -1,4 +1,4 @@
-package fuzzer.apps;
+package fuzzer.apps.VVector;
 
 public class VVectorTest {
 	private boolean mSuccess;

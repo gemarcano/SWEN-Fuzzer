@@ -1,4 +1,4 @@
-package fuzzer.apps;
+package fuzzer.apps.VVector;
 
 public interface VVector {
 	public boolean test();
