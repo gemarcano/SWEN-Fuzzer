@@ -50,36 +50,21 @@ public class fuzzer {
 
 		return lines;
 	}
-
-	/**
-	 * This code is for showing how you can get all the links on a given page,
-	 * and visit a given URL
-	 * 
-	 * @param webClient
-	 * @throws IOException
-	 * @throws MalformedURLException
-	 *//*
-	private static void discoverLinks(WebClient webClient, String url) {
-
-		try {
-			System.out.println("--------------------------------------");
-			System.out.println("Discovering links...");
-			System.out.println("--------------------------------------");
-			HtmlPage page = webClient.getPage(url);
-			// TODO dvwa
-			List<HtmlAnchor> links = page.getAnchors();
-			for (HtmlAnchor link : links) {
-				System.out.println("[" + link.asText() + "] "
-						+ link.getHrefAttribute());
-			}
-
-		} catch (FailingHttpStatusCodeException | IOException e) {
-		}
-	}*/
 	
+	/**
+	 * The recursive calling function for discoverLinks()
+	 * 
+	 *  Will only follow links associated with a web application and if they have not already been found
+	 *  
+	 * @param webClient
+	 * @param url
+	 * @param foundLinks
+	 * @return
+	 */
 	private static HashSet<String> discoverLinksRecursively(WebClient webClient, String url, HashSet<String> foundLinks) {
 
 		try {
+			// Avoid URLs that are actually email addresses
 			URL tryUrl = new URL(url);
 			if ("mailto".equals(tryUrl.getProtocol()))
 			{
@@ -88,11 +73,13 @@ public class fuzzer {
 			HtmlPage page = webClient.getPage(tryUrl);
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
-				String nextURL = page.getFullyQualifiedUrl(link.getHrefAttribute()).toString(); // Store the URL in a string
-				if (!foundLinks.contains(nextURL)) {
+				// Return a String representation of the HtmlAnchor
+				String nextURL = page.getFullyQualifiedUrl(link.getHrefAttribute()).toString();
+				// Check to make sure the link is not visisted and is associated with the fuzzUrl
+				if ( (!foundLinks.contains(nextURL) && (nextURL.contains(tryUrl.getHost()))) ) {
 					foundLinks.add(nextURL);
 					System.out.println("[" + link.asText() + "] "
-						+ link.getHrefAttribute());
+						+ nextURL.substring(17));
 					foundLinks = discoverLinksRecursively(webClient, nextURL, foundLinks);
 				}
 			}
