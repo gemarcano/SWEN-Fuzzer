@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -81,7 +82,7 @@ public class fuzzer {
 			HtmlPage page = webClient.getPage(url);
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
-				String nextURL = link.getBaseURI(); // Store the URL in a string
+				String nextURL = link.getPage().getUrl().toString(); // Store the URL in a string
 				if (!foundLinks.contains(nextURL)) {
 					foundLinks.add(nextURL);
 					System.out.println("[" + link.asText() + "] "
