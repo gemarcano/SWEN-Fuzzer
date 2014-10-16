@@ -79,7 +79,7 @@ public class fuzzer {
 				if ( (!foundLinks.contains(nextURL) && (nextURL.contains(tryUrl.getHost()))) ) {
 					foundLinks.add(nextURL);
 					System.out.println("[" + link.asText() + "] "
-						+ nextURL.substring(17));
+						+ nextURL);
 					foundLinks = discoverLinksRecursively(webClient, nextURL, foundLinks);
 				}
 			}
@@ -154,6 +154,12 @@ public class fuzzer {
 		String fuzzAuth = commandParser.get("cauth");
 		String fuzzWords = commandParser.get("cwords");
         HtmlPage page = null;
+        
+        if ("".equals(fuzzMode) && "".equals(fuzzUrl)) {
+        	System.out.println("Invalid mode and/or parameters received.");
+        	commandParser.printHelp("fuzzer MODE URL ARGS");
+        }
+        
         try {
         	page = webClient.getPage(fuzzUrl);
         } catch (IOException e) {

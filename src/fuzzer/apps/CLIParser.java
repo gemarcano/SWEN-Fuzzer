@@ -1,5 +1,7 @@
 package fuzzer.apps;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
@@ -11,7 +13,8 @@ public class CLIParser {
 
 	private Map<String, String> mCLIParams;
 	private List<String> mValidParameters;
-
+	private Options mOptions;
+	
 	/**
 	 * Constructs the CLIParser. Some syntax notes: --custom-auth=APP
 	 * --custom-words=FILENAME_PATH FIXME: FILENAME_PATH currently does not like
@@ -74,50 +77,63 @@ public class CLIParser {
 		result.put("random", "");
 		result.put("slow", "");
 		result.put("url", "");
-
+		
+		final Map<String, String> empty = new HashMap<>(result);
+		
 		if (aCommandLine.length >= 2)
 		{
 			String command = aCommandLine[0];
 			if (command.equals("discover") || command.equals("test") ) {
 				result.put("mode", command);
 			}
+			else
+			{
+				return empty;
+			}
 
-			result.put("url", aCommandLine[1]);
+			URL url;
+			try {
+				url = new URL(aCommandLine[1]);
+			} catch (MalformedURLException e1) {
+				return empty;
+			}
+			result.put("url", url.toString());
 
 			if (aCommandLine.length > 2)
 			{
 				//FIXME parse options conditionally
 				Options opts = new Options();
+				mOptions = opts;
 				//both
-				opts.addOption(OptionBuilder.withLongOpt("custom-auth").withValueSeparator().hasArg().create("cauth"));
+				opts.addOption(OptionBuilder.withLongOpt("custom-auth").withValueSeparator().hasArg().create());
 				
 				//discovery
-				opts.addOption(OptionBuilder.withLongOpt("common-words").withValueSeparator().hasArg().create("cwords"));
-				
+				opts.addOption(OptionBuilder.withLongOpt("common-words").withValueSeparator().hasArg().create());
+
 				//test
-				opts.addOption(OptionBuilder.withLongOpt("vectors").withValueSeparator().hasArg().create("vectors"));
-				opts.addOption(OptionBuilder.withLongOpt("sensitive").withValueSeparator().hasArg().create("sensitive"));
-				opts.addOption(OptionBuilder.withLongOpt("random").withValueSeparator().hasArg().create("random"));
-				opts.addOption(OptionBuilder.withLongOpt("slow").withValueSeparator().hasArg().create("slow"));
+				opts.addOption(OptionBuilder.withLongOpt("vectors").withValueSeparator().hasArg().create());
+				opts.addOption(OptionBuilder.withLongOpt("sensitive").withValueSeparator().hasArg().create());
+				opts.addOption(OptionBuilder.withLongOpt("random").withValueSeparator().hasArg().create());
+				opts.addOption(OptionBuilder.withLongOpt("slow").withValueSeparator().hasArg().create());
 				
 				CommandLineParser parser = new GnuParser();
 				CommandLine line = null;
 				
-
 				String[] restOfArgs = Arrays.copyOfRange(aCommandLine, 2, aCommandLine.length);
 				try {
 					line = parser.parse(opts, restOfArgs);
 				} catch (ParseException e) {
 					// FIXME leaking information!
-					e.printStackTrace();
+					//e.printStackTrace();
+					return empty;
 				}
 				
 				if (line != null) {
-					if (line.hasOption("cauth")) {
-						result.put("cauth", line.getOptionValue("cauth"));
+					if (line.hasOption("custom-auth")) {
+						result.put("cauth", line.getOptionValue("custom-auth"));
 					}
-					if (line.hasOption("cwords")) {
-						result.put("cwords", line.getOptionValue("cwords"));
+					if (line.hasOption("common-words")) {
+						result.put("cwords", line.getOptionValue("common-words"));
 					}
 					if (line.hasOption("vectors")) {
 						result.put("vectors", line.getOptionValue("vectors"));
@@ -132,11 +148,16 @@ public class CLIParser {
 						result.put("slow", line.getOptionValue("slow"));
 					}
 				}
-				
-					
 			}
 		}
 		
 		return result;
+	}
+	
+	public void printHelp(String aName)
+	{
+		// automatically generate the help statement
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp( aName, mOptions );
 	}
 }
