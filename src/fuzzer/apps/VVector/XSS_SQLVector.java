@@ -7,12 +7,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import fuzzer.apps.InputManipulation;
 
 
-public class XSSVector extends VVector {
+public class XSS_SQLVector extends VVector {
 
 	private final HtmlPage mPage; //Original page
-	public XSSVector(HtmlPage aPage)
+	String vectorString;
+	
+	public XSS_SQLVector(HtmlPage aPage, String vectorString)
 	{
-		super("XSS");
+		super("XSS_SQL");
 		mPage = aPage;
 	}
 	
@@ -21,7 +23,7 @@ public class XSSVector extends VVector {
 		boolean result = false;
 		boolean success = false;
 		
-		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, "<SCRIPT>alert(\"hello\")</SCRIPT>");
+		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, vectorString);
 		
 		success = true;
 		for (HtmlPage page : pages){
