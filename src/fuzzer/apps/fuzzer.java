@@ -150,7 +150,9 @@ public class fuzzer {
             SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
             ArrayList<String> sensitiveResults = searcher.search();
             System.out.println("Sensitive data:");
-            System.out.println(sensitiveResults);
+            for (String s : sensitiveResults) {
+                System.out.println(s);
+            }
 		} else {
 			System.out.println("Invalid mode \"" + fuzzMode + "\". "
 					+ "Use \"discover\" or \"test\".");
