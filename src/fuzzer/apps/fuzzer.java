@@ -56,7 +56,7 @@ public class fuzzer {
 	 * 
 	 *  Will only follow links associated with a web application and if they have not already been found
 	 *  
-	 * @param webClient
+	 * @param webClient 
 	 * @param url
 	 * @param foundLinks
 	 * @return
