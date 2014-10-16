@@ -44,14 +44,7 @@ public class InputDiscovery {
 	}
 	
 	public static List<HtmlForm> getFormElements(HtmlPage aPage) {
-		List<HtmlForm> result = new ArrayList<HtmlForm>();
-		
-		List<DomElement> DomForms = aPage.getElementsByTagName("form");
-		for (DomElement form : DomForms)
-		{
-			result.add((HtmlForm)form);
-		}
-		return result;
+		return aPage.getForms();
 	}
 	
 	public static List<HtmlInput> getInputsFromForm(HtmlForm aForm) {
