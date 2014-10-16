@@ -11,7 +11,7 @@ import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-public class XSSVectorTest {
+public class XSS_SQLVectorTest {
 
 	@Test
 	public void test() {
@@ -20,7 +20,7 @@ public class XSSVectorTest {
 		HtmlPage page;
 		try {
 			page = client.getPage("http://127.0.0.1/dvwa/login.php");
-			XSSVector vector = new XSSVector(page, "<script>alert(\"XSS\")</script>");
+			XSS_SQLVector vector = new XSS_SQLVector(page, "<script>alert(\"XSS\")</script>");
 			assertTrue(vector.test());
 			
 		} catch (FailingHttpStatusCodeException e) {

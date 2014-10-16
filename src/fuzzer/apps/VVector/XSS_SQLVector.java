@@ -7,13 +7,13 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import fuzzer.apps.InputManipulation;
 
 
-public class XSSVector implements VVector {
+public class XSS_SQLVector implements VVector {
 
 	private final HtmlPage mPage; //Original page
 	String mDescription;
 	String vectorString;
 	
-	public XSSVector(HtmlPage aPage, String vectorString)
+	public XSS_SQLVector(HtmlPage aPage, String vectorString)
 	{
 		mPage = aPage;
 		mDescription = "";
