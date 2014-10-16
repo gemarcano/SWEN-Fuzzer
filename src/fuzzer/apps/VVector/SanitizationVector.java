@@ -25,16 +25,16 @@ public class SanitizationVector extends VVector {
 	@Override
 	public boolean test() {
 		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, mVectorString);
-        boolean success = true;
+        boolean success = false;
         for (HtmlPage page : pages) {
-            success &= page.getWebResponse().getStatusCode() < 400;
+            success = page.getWebResponse().getStatusCode() < 400;
         }
         if (success) {
-        	loadDescription("Sanitization tests passed.");
+        	loadDescription("Sanitization tests passed. No exploits found.");
         } else {
-        	loadDescription("Sanitization tests failed.");
+        	loadDescription("Sanitization tests failed. Exploit found.");
         }
-		return success;
+		return !success;
 	}
     
     public void setSanitizer(Map<String, String> map) {
