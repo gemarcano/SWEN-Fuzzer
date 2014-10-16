@@ -19,9 +19,11 @@ public class BufferOverflowVectorTest {
 		WebClient client = new WebClient();
 		HtmlPage page;
 		try {
+			client.getOptions().setThrowExceptionOnFailingStatusCode(false);
 			page = client.getPage("http://127.0.0.1/dvwa/login.php");
 			BufferOverflowVector vector = new BufferOverflowVector(page);
 			assertFalse(vector.test());
+			System.out.println(vector.getDescription());
 			
 		} catch (FailingHttpStatusCodeException e) {
 			// TODO Auto-generated catch block
@@ -34,5 +36,4 @@ public class BufferOverflowVectorTest {
 			e.printStackTrace();
 		}
 	}
-
 }
