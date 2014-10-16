@@ -21,7 +21,7 @@ public class XSSVectorTest {
 		try {
 			page = client.getPage("http://127.0.0.1/dvwa/login.php");
 			XSSVector vector = new XSSVector(page);
-			assertTrue(vector.test("test"));
+			assertTrue(vector.test("<script>alert(\"XSS\")</script>"));
 			
 		} catch (FailingHttpStatusCodeException e) {
 			// TODO Auto-generated catch block
