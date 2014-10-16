@@ -18,7 +18,7 @@ public class XSSVector implements VVector {
 	}
 	
 	@Override
-	public boolean test(String vectorString) {
+	public boolean test() {
 		boolean result = false;
 		boolean success = false;
 		
