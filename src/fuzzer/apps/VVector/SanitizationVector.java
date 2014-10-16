@@ -2,6 +2,7 @@ package fuzzer.apps.VVector;
 
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -32,6 +33,7 @@ public class SanitizationVector implements VVector {
         } else {
             mDescription += "Sanitization tests failed.";
         }
+		return success;
 	}
 
 	@Override

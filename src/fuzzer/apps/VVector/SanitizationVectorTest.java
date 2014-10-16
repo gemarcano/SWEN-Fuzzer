@@ -1,4 +1,4 @@
-package fuzzer.apps;
+package fuzzer.apps.VVector;
 
 import static org.junit.Assert.*;
 
