@@ -24,6 +24,8 @@ File contains two main folders:
    - README.txt : This file contains a description of the project's contents
    - pageGuesses.txt : An example file containing common page names and extensions for use
                        with the --common-words parameter
+   - sensitive.txt : An example file containing sensitive data that should not be leaked
+   - vectors.txt : A file containing the vectors this current generation of fuzzer tests for
 
 -> src : a folder containing the source code for our Fuzzer
    
