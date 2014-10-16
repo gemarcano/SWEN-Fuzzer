@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -55,7 +56,7 @@ public class fuzzer {
 	 * @param webClient
 	 * @throws IOException
 	 * @throws MalformedURLException
-	 */
+	 *//*
 	private static void discoverLinks(WebClient webClient, String url) {
 
 		try {
@@ -72,7 +73,44 @@ public class fuzzer {
 
 		} catch (FailingHttpStatusCodeException | IOException e) {
 		}
+	}*/
+	
+	private static HashSet<String> discoverLinksRecursively(WebClient webClient, String url, HashSet<String> foundLinks) {
+
+		try {
+			HtmlPage page = webClient.getPage(url);
+			List<HtmlAnchor> links = page.getAnchors();
+			for (HtmlAnchor link : links) {
+				String nextURL = link.getBaseURI(); // Store the URL in a string
+				if (!foundLinks.contains(nextURL)) {
+					foundLinks.add(nextURL);
+					System.out.println("[" + link.asText() + "] "
+						+ link.getHrefAttribute());
+					foundLinks = discoverLinksRecursively(webClient, nextURL, foundLinks);
+				}
+			}
+
+		} catch (FailingHttpStatusCodeException | IOException e) {}
+		
+		return foundLinks;
 	}
+
+	/**
+		 * This code is for showing how you can get all the links on a given page,
+		 * and visit a given URL
+		 * 
+		 * @param webClient
+		 * @throws IOException
+		 * @throws MalformedURLException
+		 */
+		private static void discoverLinks(WebClient webClient, String url) {
+
+			System.out.println("--------------------------------------");
+			System.out.println("Discovering links...");
+			System.out.println("--------------------------------------");
+				
+			HashSet<String> links = discoverLinksRecursively(webClient, url, new HashSet<String>());
+		}
 
 	/**
 	 * 

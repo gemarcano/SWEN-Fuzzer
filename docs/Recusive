@@ -1,11 +1,7 @@
-private static Hashset<String> discoverLinksRecursively(WebClient webClient, String url, Hashset<String> foundLinks) {
+private static HashSet<String> discoverLinksRecursively(WebClient webClient, String url, HashSet<String> foundLinks) {
 
 	try {
-		System.out.println("--------------------------------------");
-		System.out.println("Discovering links...");
-		System.out.println("--------------------------------------");
 		HtmlPage page = webClient.getPage(url);
-		// TODO dvwa
 		List<HtmlAnchor> links = page.getAnchors();
 		for (HtmlAnchor link : links) {
 			String nextURL = link.getBaseURI();
@@ -18,4 +14,23 @@ private static Hashset<String> discoverLinksRecursively(WebClient webClient, Str
 		}
 
 	} catch (FailingHttpStatusCodeException | IOException e) {}
+	
+	return foundLinks;
 }
+
+/**
+	 * This code is for showing how you can get all the links on a given page,
+	 * and visit a given URL
+	 * 
+	 * @param webClient
+	 * @throws IOException
+	 * @throws MalformedURLException
+	 */
+	private static void discoverLinks(WebClient webClient, String url) {
+
+		System.out.println("--------------------------------------");
+		System.out.println("Discovering links...");
+		System.out.println("--------------------------------------");
+			
+		HashSet<String> links = discoverLinksRecursively(webClient, url, new HashSet<String());
+	}
