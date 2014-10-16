@@ -8,7 +8,7 @@ Contributors:
 
 Current Release 
 ==============================================================================================
-1.0
+2.0
 
 Description 
 ==============================================================================================
@@ -24,30 +24,32 @@ File contains two main folders:
    - README.txt : This file contains a description of the project's contents
    - pageGuesses.txt : An example file containing common page names and extensions for use
                        with the --common-words parameter
+   - sensitive.txt : An example file containing sensitive data that should not be leaked
+   - vectors.txt : A file containing the vectors this current generation of fuzzer tests for
 
 -> src : a folder containing the source code for our Fuzzer
    
    -> fuzzer.apps
    		
    		- CLIParser.java : Command-line Interface Parser
-   		- CLIParserTest.java
-   		- ExecuteVectors.java
+   		- CLIParserTest.java : Tester for CLIParser
+   		- ExecuteVectors.java : Class to execute a list of vectors
    		- fuzzer.java : The main program
         - InputDiscovery.java : Class that discovers various inputs on a webpage
-        - InputManipulation.java
+        - InputManipulation.java : Class for generating inputs
         - PageLogin.java : Handles logging in to webpages
-        - PageLoginTest.java
-        - SensitiveDataSearch.java
+        - PageLoginTest.java : Tester for PageLogin
+        - SensitiveDataSearch.java : Identifies sensitive data
         
    -> fuzzer.apps.VVector
    
-   		- BufferOverflowVector.java
-   		- BufferOverflowVectorTest.java
-   		- SanitizationVector.java
-   		- SanitizationVectorTest.java
-   		- VVector.java
-   		- VVectorTest.java   
-   		- XSS_SQLVector.java
+   		- BufferOverflowVector.java : Vector to test for buffer overflow
+   		- BufferOverflowVectorTest.java : Tester for buffer overflow
+   		- SanitizationVector.java : Vector to test for input sanitization
+   		- SanitizationVectorTest.java : Tester for input sanitization
+   		- VVector.java : Abstract class for vector testing
+   		- VVectorTest.java : Abstract class for testing of vectors
+   		- XSS_SQLVector.java : Vector to test for XSS and SQL Injection
    		- XSS_SQLVectorTest.java
 
 Installation and Usage
