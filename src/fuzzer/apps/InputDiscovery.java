@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.WebClient;
 
@@ -40,13 +43,37 @@ public class InputDiscovery {
 		return inputs;
 	}
 	
-	public static List<DomElement> getSubmitElements(HtmlPage aPage) {
-		List<DomElement> result = new ArrayList<DomElement>();
+	public static List<HtmlForm> getFormElements(HtmlPage aPage) {
+		List<HtmlForm> result = new ArrayList<HtmlForm>();
 		
-		result.add(aPage.getElementById("submit"));
-		//result.addAll(aPage.getElementsByIdAndOrName("submit"));
-		
+		List<DomElement> DomForms = aPage.getElementsByTagName("form");
+		for (DomElement form : DomForms)
+		{
+			result.add((HtmlForm)form);
+		}
 		return result;
+	}
+	
+	public static List<HtmlInput> getInputsFromForm(HtmlForm aForm) {
+		List<HtmlElement> inputs = aForm.getHtmlElementsByTagName("input");
+		List<HtmlInput> result = new ArrayList<HtmlInput>();
+		
+		for (HtmlElement input : inputs)
+		{
+			result.add((HtmlInput)input);
+		}
+		return result;
+	}
+	
+	public static List<HtmlSubmitInput> getSubmitsFromForm(HtmlForm aForm){
+		List<? extends HtmlElement> submits = aForm.getElementsByAttribute("input", "type", "submit");
+		List<HtmlSubmitInput> result = new ArrayList<HtmlSubmitInput>();
+		for (HtmlElement submit : submits)
+		{
+			result.add((HtmlSubmitInput)submit);
+		}
+		return result;
+		
 	}
 
 	/**
