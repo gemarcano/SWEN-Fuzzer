@@ -14,7 +14,7 @@ public class CLIParser {
 	private Map<String, String> mCLIParams;
 	private List<String> mValidParameters;
 	private Options mOptions;
-	
+
 	/**
 	 * Constructs the CLIParser. Some syntax notes: --custom-auth=APP
 	 * --custom-words=FILENAME_PATH FIXME: FILENAME_PATH currently does not like
@@ -41,8 +41,7 @@ public class CLIParser {
 	 */
 	public String get(String aKey) {
 		String result = mCLIParams.get(aKey);
-		if (result == null)
-		{
+		if (result == null) {
 			result = "";
 		}
 		return result;
@@ -56,12 +55,11 @@ public class CLIParser {
 	 *            The command line arguments as given to the Java application.
 	 *            The syntax for the command line parameter is:
 	 * 
-	 * <pre>
+	 *            <pre>
 	 * fuzz [discover | test] url OPTIONS
 	 * </pre>
 	 * 
-	 * {@return 
-	 *            Command line map with the parsed results matched to
+	 *            {@return Command line map with the parsed results matched to
 	 *            specific keys. Specifically: "String" -> "String" Keys ->
 	 *            Values: mode -> "discover" or "test", empty if there is none
 	 *            (this should be an error) cauth -> "app" or empty if there is
@@ -77,17 +75,24 @@ public class CLIParser {
 		result.put("random", "");
 		result.put("slow", "");
 		result.put("url", "");
-		
+
 		final Map<String, String> empty = new HashMap<>(result);
+
+		Options opts = new Options();
+		mOptions = opts;
+		// both
+		opts.addOption(OptionBuilder.withLongOpt("custom-auth")
+				.withValueSeparator().hasArg().create());
+
+		// discovery
+		opts.addOption(OptionBuilder.withLongOpt("common-words")
+				.isRequired().withValueSeparator().hasArg().create());
 		
-		if (aCommandLine.length >= 2)
-		{
+		if (aCommandLine.length >= 2) {
 			String command = aCommandLine[0];
-			if (command.equals("discover") || command.equals("test") ) {
+			if (command.equals("discover") || command.equals("test")) {
 				result.put("mode", command);
-			}
-			else
-			{
+			} else {
 				return empty;
 			}
 
@@ -99,46 +104,49 @@ public class CLIParser {
 			}
 			result.put("url", url.toString());
 
-			if (aCommandLine.length > 2)
-			{
-				//FIXME parse options conditionally
-				Options opts = new Options();
-				mOptions = opts;
-				//both
-				opts.addOption(OptionBuilder.withLongOpt("custom-auth").withValueSeparator().hasArg().create());
+			if (aCommandLine.length > 2) {
+				// FIXME parse options conditionally
 				
-				//discovery
-				opts.addOption(OptionBuilder.withLongOpt("common-words").isRequired().withValueSeparator().hasArg().create());
 
-				//test
-				opts.addOption(OptionBuilder.withLongOpt("vectors").isRequired().withValueSeparator().hasArg().create());
-				opts.addOption(OptionBuilder.withLongOpt("sensitive").isRequired().withValueSeparator().hasArg().create());
-				opts.addOption(OptionBuilder.withLongOpt("random").withValueSeparator().hasArg().create());
-				opts.addOption(OptionBuilder.withLongOpt("slow").withValueSeparator().hasArg().create());
-				
+				if (result.get("mode") == "test")
+				{
+					// test
+					opts.addOption(OptionBuilder.withLongOpt("vectors")
+							.isRequired().withValueSeparator().hasArg().create());
+					opts.addOption(OptionBuilder.withLongOpt("sensitive")
+							.isRequired().withValueSeparator().hasArg().create());
+					opts.addOption(OptionBuilder.withLongOpt("random")
+							.withValueSeparator().hasArg().create());
+					opts.addOption(OptionBuilder.withLongOpt("slow")
+							.withValueSeparator().hasArg().create());
+				}
+					
 				CommandLineParser parser = new GnuParser();
 				CommandLine line = null;
-				
-				String[] restOfArgs = Arrays.copyOfRange(aCommandLine, 2, aCommandLine.length);
+
+				String[] restOfArgs = Arrays.copyOfRange(aCommandLine, 2,
+						aCommandLine.length);
 				try {
 					line = parser.parse(opts, restOfArgs);
 				} catch (ParseException e) {
 					System.out.println(e.getMessage());
 					return empty;
 				}
-				
+
 				if (line != null) {
 					if (line.hasOption("custom-auth")) {
 						result.put("cauth", line.getOptionValue("custom-auth"));
 					}
 					if (line.hasOption("common-words")) {
-						result.put("cwords", line.getOptionValue("common-words"));
+						result.put("cwords",
+								line.getOptionValue("common-words"));
 					}
 					if (line.hasOption("vectors")) {
 						result.put("vectors", line.getOptionValue("vectors"));
 					}
 					if (line.hasOption("sensitive")) {
-						result.put("sensitive", line.getOptionValue("sensitive"));
+						result.put("sensitive",
+								line.getOptionValue("sensitive"));
 					}
 					if (line.hasOption("random")) {
 						result.put("random", line.getOptionValue("random"));
@@ -149,14 +157,13 @@ public class CLIParser {
 				}
 			}
 		}
-		
+
 		return result;
 	}
-	
-	public void printHelp(String aName)
-	{
+
+	public void printHelp(String aName) {
 		// automatically generate the help statement
 		HelpFormatter formatter = new HelpFormatter();
-		formatter.printHelp( aName, mOptions );
+		formatter.printHelp(aName, mOptions);
 	}
 }
