@@ -167,6 +167,7 @@ public class fuzzer {
                 if (login.isLoggedIn())
                 {
                 	page = login.getNextPage();
+                	fuzzUrl = page.getUrl().toString();
                 }
             }
 			System.out.println();
