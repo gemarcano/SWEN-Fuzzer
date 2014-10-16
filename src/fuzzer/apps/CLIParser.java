@@ -108,11 +108,11 @@ public class CLIParser {
 				opts.addOption(OptionBuilder.withLongOpt("custom-auth").withValueSeparator().hasArg().create());
 				
 				//discovery
-				opts.addOption(OptionBuilder.withLongOpt("common-words").withValueSeparator().hasArg().create());
+				opts.addOption(OptionBuilder.withLongOpt("common-words").isRequired().withValueSeparator().hasArg().create());
 
 				//test
-				opts.addOption(OptionBuilder.withLongOpt("vectors").withValueSeparator().hasArg().create());
-				opts.addOption(OptionBuilder.withLongOpt("sensitive").withValueSeparator().hasArg().create());
+				opts.addOption(OptionBuilder.withLongOpt("vectors").isRequired().withValueSeparator().hasArg().create());
+				opts.addOption(OptionBuilder.withLongOpt("sensitive").isRequired().withValueSeparator().hasArg().create());
 				opts.addOption(OptionBuilder.withLongOpt("random").withValueSeparator().hasArg().create());
 				opts.addOption(OptionBuilder.withLongOpt("slow").withValueSeparator().hasArg().create());
 				
@@ -123,8 +123,7 @@ public class CLIParser {
 				try {
 					line = parser.parse(opts, restOfArgs);
 				} catch (ParseException e) {
-					// FIXME leaking information!
-					//e.printStackTrace();
+					System.out.println(e.getMessage());
 					return empty;
 				}
 				

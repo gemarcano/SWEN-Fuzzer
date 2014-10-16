@@ -230,8 +230,6 @@ public class fuzzer {
                 {
                 	System.out.println(vectors.get(i).getDescription());
                 }
-            } else {
-                System.err.println("--vectors argument is required.");
             }
             if (!"".equals(fuzzSensitive)) {
                 SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
@@ -240,8 +238,6 @@ public class fuzzer {
                 for (String s : sensitiveResults) {
                     System.out.println(s);
                 }
-            } else {
-                System.err.println("--sensitive argument is required.");
             }
 		}
 	}
