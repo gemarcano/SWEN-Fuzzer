@@ -36,9 +36,10 @@ public abstract class VVector {
 				public Boolean call() {
 					return test();
 				}
-			}, timeout, TimeUnit.SECONDS, false);
+			}, timeout, TimeUnit.MILLISECONDS, false);
 		} catch (Exception e) {
 			result = true;
+			loadDescription("Timed out with " + Integer.toString(timeout) + " ms.");
 		}
 		return result;
 	}

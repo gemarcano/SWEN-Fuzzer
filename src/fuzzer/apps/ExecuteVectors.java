@@ -7,8 +7,11 @@ import fuzzer.apps.VVector.VVector;
 
 public class ExecuteVectors {
 	private List<VVector> mVectors;
-	public ExecuteVectors(List<VVector> aVectors){
+	private int mTimeMs;
+	
+	public ExecuteVectors(List<VVector> aVectors, int aTimeMs){
 		mVectors = aVectors;
+		mTimeMs = aTimeMs;
 	}
 	
 	public List<Boolean> execute()
@@ -17,7 +20,7 @@ public class ExecuteVectors {
 		for (VVector vector : mVectors)
 		{
 			System.out.println("Executing " + vector.getName());
-			results.add(vector.test());
+			results.add(vector.testWithTimeout(mTimeMs));
 		}
 		return results;
 	}

@@ -212,9 +212,8 @@ public class fuzzer {
             if (!"".equals(fuzzRandom)) {
             
             }
-            if (!"".equals(fuzzSlow)) {
-                int slow = Integer.parseInt(fuzzSlow);
-                
+            if ("".equals(fuzzSlow)) {
+            	fuzzSlow = "500";
             }
             if (!"".equals(fuzzVectors)) {
     			System.out.println("--------------------------------------");
@@ -225,7 +224,7 @@ public class fuzzer {
                 String[] elem = fuzzVectors.split(",");
                 List<VVector> vectors = buildVectors(page, Arrays.asList(elem));
                 
-                exec = new ExecuteVectors(vectors);
+                exec = new ExecuteVectors(vectors, Integer.parseInt(fuzzSlow));
                 List<Boolean> results = exec.execute();
                 for (int i = 0; i < results.size(); i++)
                 {
