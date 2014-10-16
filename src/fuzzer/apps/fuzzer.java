@@ -209,8 +209,8 @@ public class fuzzer {
         
 		if (fuzzMode.equals("test")) {
 			// Fuzz-test code here.
-            if (!"".equals(fuzzRandom)) {
-            
+            if ("".equals(fuzzRandom)) {
+            	fuzzRandom = "false";
             }
             if ("".equals(fuzzSlow)) {
             	fuzzSlow = "500";
@@ -221,8 +221,8 @@ public class fuzzer {
     			System.out.println("--------------------------------------");
                 ExecuteVectors exec;
                 //Build Vector list
-                String[] elem = fuzzVectors.split(",");
-                List<VVector> vectors = buildVectors(page, Arrays.asList(elem));
+                List<String> sVectors = getGuesses(fuzzVectors);
+                List<VVector> vectors = buildVectors(page, sVectors);
                 
                 exec = new ExecuteVectors(vectors, Integer.parseInt(fuzzSlow));
                 List<Boolean> results = exec.execute();
@@ -232,6 +232,9 @@ public class fuzzer {
                 }
             }
             if (!"".equals(fuzzSensitive)) {
+            	System.out.println("--------------------------------------");
+    			System.out.println("Looking for sensitive data...");
+    			System.out.println("--------------------------------------");
                 SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
                 ArrayList<String> sensitiveResults = searcher.search();
                 System.out.println("Sensitive data:");
