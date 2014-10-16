@@ -2,9 +2,11 @@ package fuzzer.apps;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
 
 import org.apache.http.impl.execchain.RequestAbortedException;
 
@@ -63,8 +65,6 @@ public class InputManipulation {
 					resultPage = (HtmlPage)(submit.click());
 					result.add(resultPage);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 					return new ArrayList<>();
 				}
 			}
@@ -85,13 +85,32 @@ public class InputManipulation {
 		try {
 			currentPage = (HtmlPage) aPage.refresh();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 			return new ArrayList<>();
 		}
 		
-		ArrayList<DomElement> inputs = InputDiscovery.getInputs(aPage);
-		result.add(inputs.get(new Random().nextInt(inputs.size())).getHtmlPageOrNull());
+		List<HtmlForm> forms = InputDiscovery.getFormElements(currentPage);
+		Random r = new Random(System.currentTimeMillis());
+		
+		HtmlForm form = forms.get(r.nextInt(forms.size()));
+		
+		List<HtmlInput> inputs = InputDiscovery.getInputsFromForm(form);
+		List<HtmlSubmitInput> submits = InputDiscovery.getSubmitsFromForm(form);
+		inputs.removeAll(submits);
+		
+		for (HtmlSubmitInput submit : submits) {
+			HtmlInput input = inputs.get(r.nextInt(inputs.size()));
+			input.setAttribute("size", Integer.toString(aInputString.length()));
+			Page page = input.setValueAttribute(aInputString);
+			currentPage = (HtmlPage)page;
+		
+			HtmlPage resultPage;
+			try {
+				resultPage = (HtmlPage)(submit.click());
+				result.add(resultPage);
+			} catch (IOException e) {
+				return new ArrayList<>();
+			}
+		}
 		
 		return result;
 	}
