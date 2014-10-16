@@ -11,14 +11,16 @@ public class XSSVector implements VVector {
 
 	private final HtmlPage mPage; //Original page
 	String mDescription;
-	public XSSVector(HtmlPage aPage)
+	String vectorString;
+	
+	public XSSVector(HtmlPage aPage, String vectorString)
 	{
 		mPage = aPage;
 		mDescription = "";
 	}
 	
 	@Override
-	public boolean test(String vectorString) {
+	public boolean test() {
 		boolean result = false;
 		boolean success = false;
 		
