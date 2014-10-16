@@ -10,20 +10,27 @@ import fuzzer.apps.InputManipulation;
 public class XSS_SQLVector extends VVector {
 
 	private final HtmlPage mPage; //Original page 
-	String vectorString;
+	private String vectorString;
+	private Boolean random;
 	
-	public XSS_SQLVector(HtmlPage aPage, String vStr)
+	public XSS_SQLVector(HtmlPage aPage, String vStr, Boolean random)
 	{
 		super("XSS_SQL");
 		mPage = aPage;
 		vectorString = vStr;
+		this.random = random;
 	}
 	
 	@Override
 	public boolean test() {
 		boolean result = true;
+		List<HtmlPage> pages;
 		
-		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, vectorString);
+		if (random) {
+			pages = InputManipulation.testSingleInput(mPage, vectorString);
+		} else {
+			pages = InputManipulation.testInputsWithGivenString(mPage, vectorString);
+		}
 		
 		for (HtmlPage page : pages){
 			int status = page.getWebResponse().getStatusCode();

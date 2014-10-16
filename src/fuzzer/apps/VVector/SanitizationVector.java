@@ -14,17 +14,24 @@ public class SanitizationVector extends VVector {
 	private final HtmlPage mPage; //Original page
     private Map<String, String> mSanit; // map of unsanitized string -> sanitized string
     private String mVectorString;
+    private Boolean random;
     
-	public SanitizationVector(HtmlPage aPage, String vectorString)
+	public SanitizationVector(HtmlPage aPage, String vectorString, Boolean random)
 	{
 		super("Sanitization");
 		mPage = aPage;
 		mVectorString = vectorString;
+		this.random = random;
 	}
 	
 	@Override
 	public boolean test() {
-		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, mVectorString);
+		List<HtmlPage> pages;
+		if (random) {
+			pages = InputManipulation.testSingleInput(mPage, mVectorString);
+		} else {
+			pages = InputManipulation.testInputsWithGivenString(mPage, mVectorString);
+		}
         boolean success = false;
         for (HtmlPage page : pages) {
             success = page.getWebResponse().getStatusCode() < 400;
