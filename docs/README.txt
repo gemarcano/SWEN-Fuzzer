@@ -33,6 +33,15 @@ File contains two main folders:
    		- CLIParser.java : Command-line Interface Parser
         - InputDiscovery.java : Class that discovers various inputs on a webpage
         - PageLogin.java : Handles logging in to webpages
+        
+   -> fuzzer.apps.VVector
+   
+   		- BufferOverflowVector.java
+   		- BufferOverflowVectorTest.java
+   		- SanitizationVector.java
+   		- SanitizationVectorTest.java
+   		- VVector.java
+   		- VVectorTest.java   
 
 Installation and Usage
 ==============================================================================================

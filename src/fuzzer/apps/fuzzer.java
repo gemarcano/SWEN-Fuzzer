@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.gargoylesoftware.htmlunit.CookieManager;
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
@@ -79,10 +80,15 @@ public class fuzzer {
 	private static HashSet<String> discoverLinksRecursively(WebClient webClient, String url, HashSet<String> foundLinks) {
 
 		try {
-			HtmlPage page = webClient.getPage(url);
+			URL tryUrl = new URL(url);
+			if ("mailto".equals(tryUrl.getProtocol()))
+			{
+				return foundLinks;
+			}
+			HtmlPage page = webClient.getPage(tryUrl);
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
-				String nextURL = link.getPage().getUrl().toString(); // Store the URL in a string
+				String nextURL = page.getFullyQualifiedUrl(link.getHrefAttribute()).toString(); // Store the URL in a string
 				if (!foundLinks.contains(nextURL)) {
 					foundLinks.add(nextURL);
 					System.out.println("[" + link.asText() + "] "
@@ -162,12 +168,20 @@ public class fuzzer {
 		String fuzzWords = commandParser.get("cwords");
         HtmlPage page = null;
         try {
-            page = webClient.getPage(fuzzUrl);
+        	page = webClient.getPage(fuzzUrl);
         } catch (IOException e) {
 				System.err.println(fuzzUrl + " could not be opened.");
                 System.exit(1);
         }
 		if (fuzzMode.equals("discover")) {
+			if (fuzzAuth != null) {
+                PageLogin login = new PageLogin();
+                login.printLogon(page, fuzzAuth);
+                if (login.isLoggedIn())
+                {
+                	page = login.getNextPage();
+                }
+            }
 			System.out.println();
 			System.out.println("Fuzz-discover on url: " + fuzzUrl);
 			// Discover links
@@ -178,11 +192,7 @@ public class fuzzer {
             System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
             InputDiscovery.printInputs(webClient, page);
             // Custom authentication
-            if (fuzzAuth != null) {
-                PageLogin login = new PageLogin();
-                login.printLogon(page, fuzzAuth);
-                // PageLogin.printLogon(page, fuzzAuth);
-            }
+            
 		} else if (fuzzMode.equals("test")) {
 			// Fuzz-test code here.
             String fuzzSensitive = commandParser.get("sensitive");
