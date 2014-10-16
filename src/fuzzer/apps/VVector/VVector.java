@@ -39,6 +39,7 @@ public abstract class VVector {
 			}, timeout, TimeUnit.SECONDS, false);
 		} catch (Exception e) {
 			result = true;
+			
 		}
 		return result;
 	}
