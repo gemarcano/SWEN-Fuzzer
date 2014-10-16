@@ -240,7 +240,9 @@ public class fuzzer {
                 
                 if (!Boolean.valueOf(fuzzRandom)) {
                 	for (String urlStr : pages) {
-                		List<VVector> vectors = buildVectors((HtmlPage)webClient.getPage(urlStr), sVectors);
+                		HtmlPage mPage = webClient.getPage(urlStr);
+                		System.out.println("Testing on - " + mPage.asText() + "...");
+                		List<VVector> vectors = buildVectors(mPage, sVectors);
 
                 		exec = new ExecuteVectors(vectors, Integer.parseInt(fuzzSlow));
                 		List<Boolean> results = exec.execute();
@@ -251,6 +253,7 @@ public class fuzzer {
                 	}
                 } else {
                 	HtmlPage mPage = webClient.getPage(new ArrayList<String>(pages).get(new Random().nextInt(pages.size())));
+                	System.out.println("Testing on - " + mPage.asText() + "...");
                 	List<VVector> vectors = buildVectors(mPage, sVectors);
 
             		exec = new ExecuteVectors(vectors, Integer.parseInt(fuzzSlow));
