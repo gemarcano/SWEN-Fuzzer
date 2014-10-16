@@ -1,0 +1,21 @@
+private static Hashset<String> discoverLinksRecursively(WebClient webClient, String url, Hashset<String> foundLinks) {
+
+	try {
+		System.out.println("--------------------------------------");
+		System.out.println("Discovering links...");
+		System.out.println("--------------------------------------");
+		HtmlPage page = webClient.getPage(url);
+		// TODO dvwa
+		List<HtmlAnchor> links = page.getAnchors();
+		for (HtmlAnchor link : links) {
+			String nextURL = link.getBaseURI();
+			if (!foundLinks.contains(nextURL)) {
+				foundLinks.add(nextURL);
+				System.out.println("[" + link.asText() + "] "
+					+ link.getHrefAttribute());
+				foundLinks = discoverLinksRecursively(webClient, nextURL, foundLinks)
+			}
+		}
+
+	} catch (FailingHttpStatusCodeException | IOException e) {}
+}
