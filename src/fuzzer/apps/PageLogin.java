@@ -13,6 +13,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 public class PageLogin {
 	private Map<String, String> mKnownUsernames;
 	private Map<String, String> mKnownPasswords;
+	private HtmlPage mNextPage;
 
 	public PageLogin() {
 		mKnownUsernames = new HashMap<>();
@@ -76,6 +77,8 @@ public class PageLogin {
 	 */
 	public boolean logon(HtmlPage aPage, String app) {
 		boolean success = false;
+		mNextPage = null;
+		
 
 		HtmlTextInput userInput;
 		HtmlPasswordInput passInput;
@@ -119,8 +122,20 @@ public class PageLogin {
 		// prompts).
 		if (findLoginSubmitButton(newPage) == null) {
 			success = true;
+			mNextPage = newPage;
 		}
+		
 		return success;
+	}
+	
+	public boolean isLoggedIn()
+	{
+		return mNextPage != null;
+	}
+	
+	public HtmlPage getNextPage()
+	{
+		return mNextPage;
 	}
 
 	public void printLogon(HtmlPage aPage, String app) {
