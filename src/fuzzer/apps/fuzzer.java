@@ -26,12 +26,16 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+<<<<<<< HEAD
 import fuzzer.apps.VVector.BufferOverflowVector;
 import fuzzer.apps.VVector.SanitizationVector;
 import fuzzer.apps.VVector.SanitizationVectorTest;
 import fuzzer.apps.VVector.VVector;
 import fuzzer.apps.VVector.XSS_SQLVector;
 import fuzzer.apps.VVector.XSS_SQLVectorTest;
+=======
+import fuzzer.apps.VVector.VVector;
+>>>>>>> d8b2c0a8b77f2946af5547fcbd0f3af9468d93fa
 
 public class fuzzer {
 
@@ -211,12 +215,17 @@ public class fuzzer {
             if (!"".equals(fuzzRandom)) {
             
             }
+            if (!"".equals(fuzzSlow)) {
+                int slow = Integer.parseInt(fuzzSlow);
+                
+            }
             if (!"".equals(fuzzVectors)) {
     			System.out.println("--------------------------------------");
     			System.out.println("Executing attack vectors...");
     			System.out.println("--------------------------------------");
                 ExecuteVectors exec;
                 //Build Vector list
+<<<<<<< HEAD
                 String[] elem = fuzzVectors.split(",");
                 List<VVector> vectors = buildVectors(page, Arrays.asList(elem));
                 
@@ -226,6 +235,11 @@ public class fuzzer {
                 {
                 	System.out.println(vectors.get(i).getDescription());
                 }
+=======
+                List<VVector> vectors = new ArrayList<VVector>();
+            } else {
+                System.err.println("--vectors argument is required.");
+>>>>>>> d8b2c0a8b77f2946af5547fcbd0f3af9468d93fa
             }
             if (!"".equals(fuzzSensitive)) {
                 SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
@@ -234,6 +248,8 @@ public class fuzzer {
                 for (String s : sensitiveResults) {
                     System.out.println(s);
                 }
+            } else {
+                System.err.println("--sensitive argument is required.");
             }
 		}
 	}

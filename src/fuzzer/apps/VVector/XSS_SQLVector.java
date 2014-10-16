@@ -9,20 +9,19 @@ import fuzzer.apps.InputManipulation;
 
 public class XSS_SQLVector extends VVector {
 
-	private final HtmlPage mPage; //Original page
+	private final HtmlPage mPage; //Original page 
 	String vectorString;
 	
-	public XSS_SQLVector(HtmlPage aPage, String vectorString)
+	public XSS_SQLVector(HtmlPage aPage, String vStr)
 	{
 		super("XSS_SQL");
 		mPage = aPage;
-		this.vectorString = vectorString;
+		vectorString = vStr;
 	}
 	
 	@Override
 	public boolean test() {
 		boolean result = true;
-
 		
 		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, vectorString);
 		

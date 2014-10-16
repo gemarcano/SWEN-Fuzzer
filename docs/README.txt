@@ -29,10 +29,15 @@ File contains two main folders:
    
    -> fuzzer.apps
    		
-   		- fuzzer.java : The main program
    		- CLIParser.java : Command-line Interface Parser
+   		- CLIParserTest.java
+   		- ExecuteVectors.java
+   		- fuzzer.java : The main program
         - InputDiscovery.java : Class that discovers various inputs on a webpage
+        - InputManipulation.java
         - PageLogin.java : Handles logging in to webpages
+        - PageLoginTest.java
+        - SensitiveDataSearch.java
         
    -> fuzzer.apps.VVector
    
@@ -42,6 +47,8 @@ File contains two main folders:
    		- SanitizationVectorTest.java
    		- VVector.java
    		- VVectorTest.java   
+   		- XSS_SQLVector.java
+   		- XSS_SQLVectorTest.java
 
 Installation and Usage
 ==============================================================================================
