@@ -25,6 +25,8 @@ import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import fuzzer.apps.VVector.VVector;
+
 public class fuzzer {
 
 	/**
@@ -203,10 +205,16 @@ public class fuzzer {
             if (!"".equals(fuzzRandom)) {
             
             }
+            if (!"".equals(fuzzSlow)) {
+                int slow = Integer.parseInt(fuzzSlow);
+                
+            }
             if (!"".equals(fuzzVectors)) {
                 ExecuteVectors exec;
                 //Build Vector list
                 List<VVector> vectors = new ArrayList<VVector>();
+            } else {
+                System.err.println("--vectors argument is required.");
             }
             if (!"".equals(fuzzSensitive)) {
                 SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
@@ -215,6 +223,8 @@ public class fuzzer {
                 for (String s : sensitiveResults) {
                     System.out.println(s);
                 }
+            } else {
+                System.err.println("--sensitive argument is required.");
             }
 		}
 	}
