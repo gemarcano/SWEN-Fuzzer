@@ -74,12 +74,13 @@ public class fuzzer {
 			List<HtmlAnchor> links = page.getAnchors();
 			for (HtmlAnchor link : links) {
 				// Return a String representation of the HtmlAnchor
-				String nextURL = page.getFullyQualifiedUrl(link.getHrefAttribute()).toString();
+				URL nextURLobj = page.getFullyQualifiedUrl(link.getHrefAttribute());
+                String nextURL = nextURLobj.toString();
 				// Check to make sure the link is not visisted and is associated with the fuzzUrl
 				if ( (!foundLinks.contains(nextURL) && (nextURL.contains(tryUrl.getHost()))) ) {
 					foundLinks.add(nextURL);
 					System.out.println("[" + link.asText() + "] "
-						+ nextURL.substring(17));
+						+ nextURLobj.getPath());
 					foundLinks = discoverLinksRecursively(webClient, nextURL, foundLinks);
 				}
 			}
@@ -153,6 +154,10 @@ public class fuzzer {
 		String fuzzUrl = commandParser.get("url");
 		String fuzzAuth = commandParser.get("cauth");
 		String fuzzWords = commandParser.get("cwords");
+        String fuzzVectors = commandParser.get("vectors");
+        String fuzzSensitive = commandParser.get("sensitive");
+        String fuzzRandom = commandParser.get("random");
+        String fuzzSlow = commandParser.get("slow");
         HtmlPage page = null;
         try {
         	page = webClient.getPage(fuzzUrl);
@@ -160,37 +165,45 @@ public class fuzzer {
 				System.err.println(fuzzUrl + " could not be opened.");
                 System.exit(1);
         }
-		if (fuzzMode.equals("discover")) {
-			if (fuzzAuth != null) {
-                PageLogin login = new PageLogin();
-                login.printLogon(page, fuzzAuth);
-                if (login.isLoggedIn())
-                {
-                	page = login.getNextPage();
-                	fuzzUrl = page.getUrl().toString();
+		
+        if (!"".equals(fuzzAuth)) {
+            PageLogin login = new PageLogin();
+            login.printLogon(page, fuzzAuth);
+            if (login.isLoggedIn())
+            {
+                page = login.getNextPage();
+                fuzzUrl = page.getUrl().toString();
+            }
+        }
+        System.out.println();
+        System.out.println("Fuzz-discover on url: " + fuzzUrl);
+        // Discover links
+        discoverLinks(webClient, fuzzUrl);
+        // Guess pages
+        guessPages(webClient, fuzzUrl, fuzzWords);
+        // Input discovery
+        System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
+        InputDiscovery.printInputs(webClient, page);
+        // Custom authentication
+        
+		if (fuzzMode.equals("test")) {
+			// Fuzz-test code here.
+            if (!"".equals(fuzzRandom)) {
+            
+            }
+            if (!"".equals(fuzzVectors)) {
+                
+            }
+            if (!"".equals(fuzzSensitive)) {
+                SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
+                ArrayList<String> sensitiveResults = searcher.search();
+                System.out.println("Sensitive data:");
+                for (String s : sensitiveResults) {
+                    System.out.println(s);
                 }
             }
-			System.out.println();
-			System.out.println("Fuzz-discover on url: " + fuzzUrl);
-			// Discover links
-			discoverLinks(webClient, fuzzUrl);
-			// Guess pages
-			guessPages(webClient, fuzzUrl, fuzzWords);
-            // Input discovery
-            System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
-            InputDiscovery.printInputs(webClient, page);
-            // Custom authentication
-            
-		} else if (fuzzMode.equals("test")) {
-			// Fuzz-test code here.
-            String fuzzSensitive = commandParser.get("sensitive");
-            SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
-            ArrayList<String> sensitiveResults = searcher.search();
-            System.out.println("Sensitive data:");
-            for (String s : sensitiveResults) {
-                System.out.println(s);
-            }
-		} else {
+		}
+        if (!fuzzMode.equals("test") && !fuzzMode.equals("discover")) {
 			System.out.println("Invalid mode \"" + fuzzMode + "\". "
 					+ "Use \"discover\" or \"test\".");
 		}
