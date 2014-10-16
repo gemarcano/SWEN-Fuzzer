@@ -163,6 +163,7 @@ public class fuzzer {
         if ("".equals(fuzzMode) && "".equals(fuzzUrl)) {
         	System.out.println("Invalid mode and/or parameters received.");
         	commandParser.printHelp("fuzzer MODE URL ARGS");
+        	System.exit(1);
         }
         
         try {
@@ -172,25 +173,31 @@ public class fuzzer {
                 System.exit(1);
         }
 		
+        //Do authentication first
         if (!"".equals(fuzzAuth)) {
             PageLogin login = new PageLogin();
             login.printLogon(page, fuzzAuth);
+            
+            //If we succeed login in, use the new page as our source
             if (login.isLoggedIn())
             {
                 page = login.getNextPage();
                 fuzzUrl = page.getUrl().toString();
             }
         }
-        System.out.println();
-        System.out.println("Fuzz-discover on url: " + fuzzUrl);
-        // Discover links
-        discoverLinks(webClient, fuzzUrl);
-        // Guess pages
-        guessPages(webClient, fuzzUrl, fuzzWords);
-        // Input discovery
-        System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
-        InputDiscovery.printInputs(webClient, page);
-        // Custom authentication
+        
+        if (fuzzMode == "discover")
+        {
+	        System.out.println();
+	        System.out.println("Fuzz-discover on url: " + fuzzUrl);
+	        // Discover links
+	        discoverLinks(webClient, fuzzUrl);
+	        // Guess pages
+	        guessPages(webClient, fuzzUrl, fuzzWords);
+	        // Input discovery
+	        System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
+	        InputDiscovery.printInputs(webClient, page);
+        }
         
 		if (fuzzMode.equals("test")) {
 			// Fuzz-test code here.
@@ -208,10 +215,6 @@ public class fuzzer {
                     System.out.println(s);
                 }
             }
-		}
-        if (!fuzzMode.equals("test") && !fuzzMode.equals("discover")) {
-			System.out.println("Invalid mode \"" + fuzzMode + "\". "
-					+ "Use \"discover\" or \"test\".");
 		}
 	}
 }
