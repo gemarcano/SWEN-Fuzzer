@@ -28,7 +28,7 @@ public class BufferOverflowVector implements VVector {
 		
 		success = true;
 		for (HtmlPage page : pages){
-			success &= page.getWebResponse().getStatusCode() < 400;
+			success = success && page.getWebResponse().getStatusCode() < 400;
 		}
 		
 		if (success){
@@ -42,7 +42,7 @@ public class BufferOverflowVector implements VVector {
 			pages = InputManipulation.testInputsWithGivenString(mPage, overflowString);
 
 			for (HtmlPage page : pages){
-				result |= page.getWebResponse().getStatusCode() >= 400;
+				result = result || page.getWebResponse().getStatusCode() >= 400;
 			}
 			
 			overflowString = "";
