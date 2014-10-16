@@ -1,7 +1,6 @@
 package fuzzer.apps.VVector;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.gargoylesoftware.htmlunit.Page;
@@ -10,13 +9,14 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 
 import fuzzer.apps.InputDiscovery;
 
 
 public class BufferOverflowVector implements VVector {
 
-	HtmlPage mPage;
+	private final HtmlPage mPage; //Original page
 	public BufferOverflowVector(HtmlPage aPage)
 	{
 		mPage = aPage;
@@ -24,17 +24,17 @@ public class BufferOverflowVector implements VVector {
 	
 	private boolean testInputString(String inputString)
 	{
-		HtmlPage inputPage;
+		boolean result = false;
+		HtmlPage currentPage;
 		try {
-			inputPage = (HtmlPage)mPage.refresh();
-		} catch (IOException e) {
+			currentPage = (HtmlPage) mPage.refresh();
+		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 			return false;
 		}
 		
-		List<DomElement> DomForms = mPage.getElementsByTagName("form");
-		List<HtmlForm> forms = InputDiscovery.getFormElements(inputPage);
+		List<HtmlForm> forms = InputDiscovery.getFormElements(currentPage);
 		
 		//for each form, get the input elements,
 		//identify the submit button
@@ -42,35 +42,32 @@ public class BufferOverflowVector implements VVector {
 		for (HtmlForm form : forms)
 		{
 			List<HtmlInput> inputs = InputDiscovery.getInputsFromForm(form);
-			List<? extends HtmlElement> submits = form.getElementsByAttribute("input", "type", "submit");
+			List<HtmlSubmitInput> submits = InputDiscovery.getSubmitsFromForm(form);
 			inputs.removeAll(submits);
 			
-			for (HtmlElement input : inputs)
-			{
-				Page page = ((HtmlInput)input).setValueAttribute(inputString);
-				if (page.isHtmlPage())
+			for (HtmlSubmitInput submit : submits) {
+				for (HtmlInput input : inputs)
 				{
-					inputPage = (HtmlPage)page;
-					System.out.println(((HtmlPage)inputPage).asText());
+					input.setAttribute("size", "100000000");
+					Page page = input.setValueAttribute(inputString);
+					currentPage = (HtmlPage)page;
+					System.out.println(currentPage.asText());
 				}
-			}
-			
-			Page resultPage;
-			for (HtmlElement submit : submits)
-			{
+				
+				HtmlPage resultPage;
 				try {
-					resultPage = ((HtmlInput)submit).click();
-					if (resultPage.isHtmlPage())
-					{
-						System.out.println(((HtmlPage)resultPage).asText());
-					}
+					resultPage = (HtmlPage)(submit.click());
+					System.out.println(resultPage.asText());
+					result = resultPage.getWebResponse().getStatusCode() >= 400;
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					return false;
 				}
 			}
+			
 		}
-		return true;
+		return result;
 	}
 	
 	@Override
@@ -82,7 +79,7 @@ public class BufferOverflowVector implements VVector {
 		int bound = 1<<16;
 		for (int i = 0; i < bound; i++)
 		{
-			overflowString += "a";
+			overflowString += "abcdefghij";
 		}
 		testInputString(overflowString);
 		
