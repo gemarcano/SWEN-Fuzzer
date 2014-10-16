@@ -128,7 +128,17 @@ public class fuzzer {
 			System.out.println("Guessing common pages...");
 			System.out.println("--------------------------------------");
 			ArrayList<String> lines = getGuesses(wordsPath);
+			String urlCopy = url;
 			for (String line : lines) {
+				int lastIndexSlash = urlCopy.lastIndexOf('/');
+				if (lastIndexSlash >= 0)
+			    {
+			       urlCopy = urlCopy.substring(0, lastIndexSlash); //strip off the slash
+			    }
+				int secondTolastIndexSlash = urlCopy.lastIndexOf('/');
+				if (lastIndexSlash -secondTolastIndexSlash != 1)
+					url = urlCopy;
+				
 				HtmlPage guess = webClient.getPage(url + line);
 				WebResponse response = guess.getWebResponse();
 				int statusCode = response.getStatusCode();
@@ -203,7 +213,6 @@ public class fuzzer {
         // Guess pages
         guessPages(webClient, fuzzUrl, fuzzWords);
         // Input discovery
-        System.out.println(InputDiscovery.getUrlInputs(page.getUrl()));
         InputDiscovery.printInputs(webClient, page);
 
         

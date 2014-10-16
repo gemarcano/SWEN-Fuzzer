@@ -32,41 +32,40 @@ public class InputDiscovery {
 	 * @return All inputs from page.
 	 */
 	public static ArrayList<DomElement> getInputs(HtmlPage page) {
-		
+
 		List<DomElement> elems = page.getElementsByTagName("input");
-		
+
 		ArrayList<DomElement> inputs = new ArrayList<DomElement>();
 		for (DomElement e : elems) {
-				inputs.add(e);
+			inputs.add(e);
 		}
-		
+
 		return inputs;
 	}
-	
+
 	public static List<HtmlForm> getFormElements(HtmlPage aPage) {
 		return aPage.getForms();
 	}
-	
+
 	public static List<HtmlInput> getInputsFromForm(HtmlForm aForm) {
 		List<HtmlElement> inputs = aForm.getHtmlElementsByTagName("input");
 		List<HtmlInput> result = new ArrayList<HtmlInput>();
-		
-		for (HtmlElement input : inputs)
-		{
-			result.add((HtmlInput)input);
+
+		for (HtmlElement input : inputs) {
+			result.add((HtmlInput) input);
 		}
 		return result;
 	}
-	
-	public static List<HtmlSubmitInput> getSubmitsFromForm(HtmlForm aForm){
-		List<? extends HtmlElement> submits = aForm.getElementsByAttribute("input", "type", "submit");
+
+	public static List<HtmlSubmitInput> getSubmitsFromForm(HtmlForm aForm) {
+		List<? extends HtmlElement> submits = aForm.getElementsByAttribute(
+				"input", "type", "submit");
 		List<HtmlSubmitInput> result = new ArrayList<HtmlSubmitInput>();
-		for (HtmlElement submit : submits)
-		{
-			result.add((HtmlSubmitInput)submit);
+		for (HtmlElement submit : submits) {
+			result.add((HtmlSubmitInput) submit);
 		}
 		return result;
-		
+
 	}
 
 	/**
@@ -85,14 +84,14 @@ public class InputDiscovery {
 		}
 		return elements;
 	}
-    
-    /**
-     * Returns a string representation of the given url
-     * without the query inputs.
-     */
-    public static String getUrlBase(URL url) {
-        return url.getAuthority() + url.getPath();
-    }
+
+	/**
+	 * Returns a string representation of the given url without the query
+	 * inputs.
+	 */
+	public static String getUrlBase(URL url) {
+		return url.getAuthority() + url.getPath();
+	}
 
 	/**
 	 * Returns an ArrayList of the GET inputs in the given url.
@@ -130,7 +129,14 @@ public class InputDiscovery {
 		System.out.println("--------------------------------------");
 		System.out.println("URL inputs...");
 		System.out.println("--------------------------------------");
-		System.out.println(getUrlInputs(page.getUrl()));
+		ArrayList<String> urlInputs = getUrlInputs(page.getUrl());
+		if (urlInputs != null) {
+			System.out.println(urlInputs);
+		}
+		else
+		{
+			System.out.println("None found for the URL " + page.getUrl().toString());
+		}
 
 		System.out.println("--------------------------------------");
 		System.out.println("Cookies...");
