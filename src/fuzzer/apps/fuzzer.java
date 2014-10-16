@@ -220,6 +220,8 @@ public class fuzzer {
 			// Fuzz-test code here.
             if ("".equals(fuzzRandom)) {
             	fuzzRandom = "false";
+            } else {
+            	
             }
             if ("".equals(fuzzSlow)) {
             	fuzzSlow = "500";
