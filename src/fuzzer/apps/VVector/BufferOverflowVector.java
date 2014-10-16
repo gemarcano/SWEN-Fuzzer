@@ -1,16 +1,10 @@
 package fuzzer.apps.VVector;
 
-import java.io.IOException;
-import java.math.BigInteger;
 import java.util.List;
 
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.html.HtmlForm;
-import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 
-import fuzzer.apps.InputDiscovery;
+import fuzzer.apps.InputManipulation;
 
 
 public class BufferOverflowVector implements VVector {
@@ -23,78 +17,57 @@ public class BufferOverflowVector implements VVector {
 		mDescription = "";
 	}
 	
-	private boolean testInputString(String inputString, BigInteger aSize)
-	{
-		boolean result = false;
-		HtmlPage currentPage;
-		try {
-			currentPage = (HtmlPage) mPage.refresh();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return false;
-		}
-		
-		List<HtmlForm> forms = InputDiscovery.getFormElements(currentPage);
-		
-		//for each form, get the input elements,
-		//identify the submit button
-		//Fill all inputs with something.
-		for (HtmlForm form : forms)
-		{
-			List<HtmlInput> inputs = InputDiscovery.getInputsFromForm(form);
-			List<HtmlSubmitInput> submits = InputDiscovery.getSubmitsFromForm(form);
-			inputs.removeAll(submits);
-			
-			for (HtmlSubmitInput submit : submits) {
-				for (HtmlInput input : inputs)
-				{
-					input.setAttribute("size", aSize.toString());
-					Page page = input.setValueAttribute(inputString);
-					currentPage = (HtmlPage)page;
-				}
-				
-				HtmlPage resultPage;
-				try {
-					resultPage = (HtmlPage)(submit.click());
-					result = resultPage.getWebResponse().getStatusCode() >= 400;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return false;
-				}
-			}
-		}
-		return result;
-	}
+	
 	
 	@Override
 	public boolean test() {
 		boolean result = false;
 		boolean success = false;
-		BigInteger size = new BigInteger("10000000000000000");
 		
-		success = !testInputString("1", size);
+		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, "abcdefg");
+		
+		success = true;
+		for (HtmlPage page : pages){
+			success &= page.getWebResponse().getStatusCode() < 400;
+		}
 		
 		if (success){
 			String overflowString = "";
-			int bound = 1<<16;
+			int bound = 1<<4;
 			for (int i = 0; i < bound; i++)
 			{
 				overflowString += "abcdefghij";
 			}
-			result = testInputString(overflowString, size);
+			
+			pages = InputManipulation.testInputsWithGivenString(mPage, overflowString);
+
+			for (HtmlPage page : pages){
+				result |= page.getWebResponse().getStatusCode() >= 400;
+			}
+			
+			overflowString = "";
+			bound = 1<<16;
+			for (int i = 0; i < bound; i++)
+			{
+				overflowString += "abcdefghij";
+			}
+			
+			pages = InputManipulation.testInputsWithGivenString(mPage, overflowString);
+			
+			for (HtmlPage page : pages){
+				result |= page.getWebResponse().getStatusCode() >= 400;
+			}
 		}
 		
 		//Get page back
 		//Now try to overflow.
 		if (success)
 		{
-			mDescription += "Normal run succeeded and " + (result ? "the test run found a problem." : "test run did not find a problem.");
+			mDescription += "Normal run succeeded and " + (result ? "the test runs found a problem." : "test runs did not find a problem.");
 		}
 		else
 		{
-			mDescription += "Normal run did not succeed!!! Test did not run, since baseline could not be established.";
+			mDescription += "Normal run did not succeed!!! Tests did not run, since baseline could not be established.";
 		}
 		
 		return success && result;
