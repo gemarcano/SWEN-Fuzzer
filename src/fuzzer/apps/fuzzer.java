@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,6 +25,13 @@ import com.gargoylesoftware.htmlunit.WebClientOptions;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
+import fuzzer.apps.VVector.BufferOverflowVector;
+import fuzzer.apps.VVector.SanitizationVector;
+import fuzzer.apps.VVector.SanitizationVectorTest;
+import fuzzer.apps.VVector.VVector;
+import fuzzer.apps.VVector.XSS_SQLVector;
+import fuzzer.apps.VVector.XSS_SQLVectorTest;
 
 public class fuzzer {
 
@@ -204,9 +212,20 @@ public class fuzzer {
             
             }
             if (!"".equals(fuzzVectors)) {
+    			System.out.println("--------------------------------------");
+    			System.out.println("Executing attack vectors...");
+    			System.out.println("--------------------------------------");
                 ExecuteVectors exec;
                 //Build Vector list
-                List<VVector> vectors = new ArrayList<VVector>();
+                String[] elem = fuzzVectors.split(",");
+                List<VVector> vectors = buildVectors(page, Arrays.asList(elem));
+                
+                exec = new ExecuteVectors(vectors);
+                List<Boolean> results = exec.execute();
+                for (int i = 0; i < results.size(); i++)
+                {
+                	System.out.println(vectors.get(i).getDescription());
+                }
             }
             if (!"".equals(fuzzSensitive)) {
                 SensitiveDataSearch searcher = new SensitiveDataSearch(page, fuzzSensitive);
@@ -217,5 +236,30 @@ public class fuzzer {
                 }
             }
 		}
+	}
+	
+	private static List<VVector> buildVectors(HtmlPage aPage, List<String> aVectors)
+	{
+		List<VVector> result = new ArrayList<VVector>();
+		for (String vec : aVectors)
+		{
+			switch (vec.toLowerCase()){
+			case "sanitize":
+				result.add(new SanitizationVector(aPage, "FIXME"));
+				break;
+			case "bufferoverflow":
+				result.add(new BufferOverflowVector(aPage));
+				break;
+				
+			case "sqlinjection":
+				result.add(new XSS_SQLVector(aPage, "' OR 'a'='a' OR '"));
+				break;
+				
+			case "xss":
+				result.add(new XSS_SQLVector(aPage, "<script>alert(\"hello\")</script>"));
+				break;
+			}
+		}
+		return result;
 	}
 }

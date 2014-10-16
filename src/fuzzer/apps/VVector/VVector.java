@@ -20,7 +20,7 @@ public abstract class VVector {
 	
 	protected final void loadDescription(String aMessage)
 	{
-		mMessage = mMessage;
+		mMessage = aMessage;
 	}
 	
 	public final String getName()

@@ -16,11 +16,12 @@ public class XSS_SQLVector extends VVector {
 	{
 		super("XSS_SQL");
 		mPage = aPage;
+		this.vectorString = vectorString;
 	}
 	
 	@Override
 	public boolean test() {
-		boolean result = false;
+		boolean result = true;
 
 		
 		List<HtmlPage> pages = InputManipulation.testInputsWithGivenString(mPage, vectorString);
@@ -28,7 +29,7 @@ public class XSS_SQLVector extends VVector {
 		for (HtmlPage page : pages){
 			int status = page.getWebResponse().getStatusCode();
 			if ( (status >= 200) && (status < 300)) {
-				result = true;
+				result = false;
 			}
 		}
 		
