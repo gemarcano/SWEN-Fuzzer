@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.http.impl.execchain.RequestAbortedException;
+
 import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -34,8 +36,6 @@ public class InputManipulation {
 		try {
 			currentPage = (HtmlPage) aPage.refresh();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 			return new ArrayList<>();
 		}
 		

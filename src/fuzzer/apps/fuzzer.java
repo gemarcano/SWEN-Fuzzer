@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
+import org.apache.http.impl.execchain.RequestAbortedException;
+
 import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
@@ -227,8 +229,6 @@ public class fuzzer {
 			// Fuzz-test code here.
 			if ("".equals(fuzzRandom)) {
 				fuzzRandom = "false";
-			} else {
-				fuzzRandom = "true";
 			}
 			if ("".equals(fuzzSlow)) {
 				fuzzSlow = "500";
@@ -241,11 +241,12 @@ public class fuzzer {
 				// Build Vector list
 				List<String> sVectors = getGuesses(fuzzVectors);
 
+				
 				if (!Boolean.valueOf(fuzzRandom)) {
 					for (String urlStr : pages) {
 						List<VVector> vectors = buildVectors(
 								(HtmlPage) webClient.getPage(urlStr), sVectors);
-
+						System.out.println("Attacking page: "+ urlStr);
 						exec = new ExecuteVectors(vectors,
 								Integer.parseInt(fuzzSlow));
 						List<Boolean> results = exec.execute();
@@ -254,9 +255,10 @@ public class fuzzer {
 						}
 					}
 				} else {
-					HtmlPage mPage = webClient.getPage(new ArrayList<String>(
+					HtmlPage attackPage = webClient.getPage(new ArrayList<String>(
 							pages).get(new Random().nextInt(pages.size())));
-					List<VVector> vectors = buildVectors(mPage, sVectors);
+					System.out.println("Attacking random page: "+ attackPage.getUrl().toString());
+					List<VVector> vectors = buildVectors(attackPage, sVectors);
 
 					exec = new ExecuteVectors(vectors,
 							Integer.parseInt(fuzzSlow));
@@ -264,8 +266,10 @@ public class fuzzer {
 					for (int i = 0; i < results.size(); i++) {
 						System.out.println(vectors.get(i).getDescription());
 					}
+					System.out.println();
 				}
 			}
+				
 			if (!"".equals(fuzzSensitive)) {
 				System.out.println("--------------------------------------");
 				System.out.println("Looking for sensitive data...");

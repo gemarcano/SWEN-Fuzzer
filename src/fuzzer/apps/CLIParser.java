@@ -108,7 +108,7 @@ public class CLIParser {
 				// FIXME parse options conditionally
 				
 
-				if (result.get("mode") == "test")
+				if ("test".equals(result.get("mode")))
 				{
 					// test
 					opts.addOption(OptionBuilder.withLongOpt("vectors")
