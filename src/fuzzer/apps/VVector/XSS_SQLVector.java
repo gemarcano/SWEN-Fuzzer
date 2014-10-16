@@ -9,7 +9,7 @@ import fuzzer.apps.InputManipulation;
 
 public class XSS_SQLVector extends VVector {
 
-	private final HtmlPage mPage; //Original page
+	private final HtmlPage mPage; //Original page 
 	String vectorString;
 	
 	public XSS_SQLVector(HtmlPage aPage, String vStr)
