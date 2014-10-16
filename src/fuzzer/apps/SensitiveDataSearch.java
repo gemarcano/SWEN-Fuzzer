@@ -1,6 +1,7 @@
 package fuzzer.apps;
 
 import java.io.BufferedReader;
+import java.io.StringReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,18 +12,11 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 public class SensitiveDataSearch {
     private HtmlPage page;
-    private File tempSaveFile;
     private ArrayList<String> data = new ArrayList<String>();
     
 	public SensitiveDataSearch(HtmlPage page, String dataPath) {
         this.page = page;
         readDataFile(dataPath);
-        tempSaveFile = new File("./temp/temp.html");
-        try {
-            page.save(tempSaveFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     
     private void readDataFile(String dataPath) {
@@ -48,22 +42,21 @@ public class SensitiveDataSearch {
         ArrayList<String> results = new ArrayList<String>();
         BufferedReader reader;
         int lineNum = 0;
-		try {
-			reader = new BufferedReader(new FileReader(tempSaveFile));
-			String line;
-			while ((line = reader.readLine()) != null) {
+        try {
+            reader = new BufferedReader(new StringReader(page.asXml()));
+            String line;
+            while ((line = reader.readLine()) != null) {
                 for (String dataEntry : data) {
                     if (line.toLowerCase().contains(dataEntry.toLowerCase())) {
                         results.add("line " + lineNum + ": " + line);
                     }
                 }
                 lineNum++;
-			}
-			reader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return results;
     }
     
