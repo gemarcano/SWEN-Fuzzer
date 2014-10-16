@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 
 import com.gargoylesoftware.htmlunit.CookieManager;
@@ -107,13 +108,13 @@ public class fuzzer {
 		 * @throws IOException
 		 * @throws MalformedURLException
 		 */
-		private static void discoverLinks(WebClient webClient, String url) {
+		private static HashSet<String> discoverLinks(WebClient webClient, String url) {
 
 			System.out.println("--------------------------------------");
 			System.out.println("Discovering links...");
 			System.out.println("--------------------------------------");
 				
-			HashSet<String> links = discoverLinksRecursively(webClient, url, new HashSet<String>());
+			return discoverLinksRecursively(webClient, url, new HashSet<String>());
 		}
 
 	/**
@@ -153,8 +154,11 @@ public class fuzzer {
 
 	/**
 	 * @param args
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 * @throws FailingHttpStatusCodeException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FailingHttpStatusCodeException, MalformedURLException, IOException {
 		// Turn off those CSS errors and warnings
 		java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(
 				Level.OFF);
@@ -209,7 +213,7 @@ public class fuzzer {
         System.out.println();
         System.out.println("Fuzz-discover on url: " + fuzzUrl);
         // Discover links
-        discoverLinks(webClient, fuzzUrl);
+        HashSet<String> pages = discoverLinks(webClient, fuzzUrl);
         // Guess pages
         guessPages(webClient, fuzzUrl, fuzzWords);
         // Input discovery
@@ -221,7 +225,7 @@ public class fuzzer {
             if ("".equals(fuzzRandom)) {
             	fuzzRandom = "false";
             } else {
-            	
+            	fuzzRandom = "true";
             }
             if ("".equals(fuzzSlow)) {
             	fuzzSlow = "500";
@@ -233,13 +237,28 @@ public class fuzzer {
                 ExecuteVectors exec;
                 //Build Vector list
                 List<String> sVectors = getGuesses(fuzzVectors);
-                List<VVector> vectors = buildVectors(page, sVectors);
                 
-                exec = new ExecuteVectors(vectors, Integer.parseInt(fuzzSlow));
-                List<Boolean> results = exec.execute();
-                for (int i = 0; i < results.size(); i++)
-                {
-                	System.out.println(vectors.get(i).getDescription());
+                if (!Boolean.valueOf(fuzzRandom)) {
+                	for (String urlStr : pages) {
+                		List<VVector> vectors = buildVectors((HtmlPage)webClient.getPage(urlStr), sVectors);
+
+                		exec = new ExecuteVectors(vectors, Integer.parseInt(fuzzSlow));
+                		List<Boolean> results = exec.execute();
+                		for (int i = 0; i < results.size(); i++)
+                		{
+                			System.out.println(vectors.get(i).getDescription());
+                		}
+                	}
+                } else {
+                	HtmlPage mPage = webClient.getPage(new ArrayList<String>(pages).get(new Random().nextInt(pages.size())));
+                	List<VVector> vectors = buildVectors(mPage, sVectors);
+
+            		exec = new ExecuteVectors(vectors, Integer.parseInt(fuzzSlow));
+            		List<Boolean> results = exec.execute();
+            		for (int i = 0; i < results.size(); i++)
+            		{
+            			System.out.println(vectors.get(i).getDescription());
+            		}
                 }
             }
             if (!"".equals(fuzzSensitive)) {

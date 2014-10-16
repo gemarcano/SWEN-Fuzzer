@@ -91,7 +91,7 @@ public class InputManipulation {
 		}
 		
 		ArrayList<DomElement> inputs = InputDiscovery.getInputs(aPage);
-		result.add(inputs.get(0).getHtmlPageOrNull());
+		result.add(inputs.get(new Random().nextInt(inputs.size())).getHtmlPageOrNull());
 		
 		return result;
 	}
